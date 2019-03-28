@@ -1,1 +1,1 @@
-from video_streamer.gui import *
+from video_streamer.gui.SelfUILoader import SelfUILoader
