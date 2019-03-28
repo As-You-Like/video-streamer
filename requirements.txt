@@ -1,0 +1,3 @@
+pycairo
+PyGObject
+PySide2
