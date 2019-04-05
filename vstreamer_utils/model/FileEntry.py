@@ -1,4 +1,4 @@
-import video_streamer_utils
+import vstreamer_utils
 import collections
 import pathlib
 import abc
@@ -53,7 +53,7 @@ class DirectoryEntry(FileEntry):
 class VideoFileEntry(FileEntry):
     def __init__(self, file, directory_root):
         super().__init__(file, directory_root)
-        if not video_streamer_utils.is_video_file(file):
+        if not vstreamer_utils.is_video_file(file):
             raise ValueError("'%s' is not a video file" % str(file))
         # todo video info
 

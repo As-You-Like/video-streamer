@@ -1,4 +1,4 @@
-import video_streamer_utils
+import vstreamer_utils
 import pathlib
 import gi
 gi.require_version("GstRtspServer", "1.0")
@@ -14,7 +14,7 @@ class VideoServer:
 
     def add_media(self, file):
         file = pathlib.Path(file)
-        if not video_streamer_utils.is_video_file(file):
+        if not vstreamer_utils.is_video_file(file):
             raise ValueError("'%s' is not a valid video file" % str(file))
         if not file.is_absolute():
             raise ValueError("'%s' is not an absolute path" % str(file))

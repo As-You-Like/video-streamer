@@ -1,4 +1,4 @@
-from video_streamer_server import server
+from vstreamer_server import server
 import gi
 gi.require_version("Gst", "1.0")
 from gi.repository import GLib, Gst

@@ -1,0 +1,1 @@
+from vstreamer.config import *
