@@ -30,3 +30,16 @@ def load_ui(file, widget):
     module_name = inspect.getmodule(frame[0]).__name__  # caller module name
     ui_file_path = pkg_resources.resource_filename(module_name, file)
     _SelfUILoader(widget).load(str(ui_file_path))
+
+
+def size_to_string(size, suffix="B"):
+    if size < 10240:
+        return "%d %s" % (size, suffix)
+    size >>= 10
+    if size < 10240:
+        return "%d Ki%s" % (size, suffix)
+    size >>= 10
+    if size < 10240:
+        return "%d Mi%s" % (size, suffix)
+    size >>= 10
+    return "%d Gi%s" % (size, suffix)

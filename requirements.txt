@@ -1,3 +1,4 @@
+pymediainfo
 pycairo
 PyGObject
 PySide2

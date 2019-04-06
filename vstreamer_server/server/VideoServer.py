@@ -8,16 +8,14 @@ from gi.repository import GstRtspServer
 class VideoServer:
     def __init__(self, port, directory_root):
         self.port = int(port)
-        self.directory_root = pathlib.Path(directory_root)
+        self.directory_root = pathlib.Path(directory_root).absolute()
         self.server = GstRtspServer.RTSPServer.new()
         self.server.set_service(str(self.port))
 
     def add_media(self, file):
-        file = pathlib.Path(file)
+        file = pathlib.Path(file).absolute()
         if not vstreamer_utils.is_video_file(file):
             raise ValueError("'%s' is not a valid video file" % str(file))
-        if not file.is_absolute():
-            raise ValueError("'%s' is not an absolute path" % str(file))
 
         demuxer = VideoServer._corresponding_demuxer(file)
         server_subpath = "/" + str(file.relative_to(self.directory_root))
