@@ -20,6 +20,10 @@ class _SelfUILoader(QtUiTools.QUiLoader):
             return widget
 
 
+SERVER_PORT = 5655
+SERVER_VIDEO_PORT = 5656
+
+
 def is_video_file(file):
     file = pathlib.Path(file)
     return file.is_file() and file.suffix in (".mkv", ".mp4")

@@ -1,14 +1,10 @@
 from PySide2 import QtWidgets, QtCore
+from vstreamer import gui
 import vstreamer_utils
 
 
-class LoginDialog(QtWidgets.QDialog):
+class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, controller, parent=None):
         super().__init__(parent)
-        vstreamer_utils.load_ui("LoginDialog.ui", self)
-
         self.controller = controller
         self.controller.view = self
-
-        self.button.clicked.connect(self.controller.accept_server)
-
