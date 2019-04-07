@@ -12,7 +12,7 @@ class LoginDialog(QtWidgets.QDialog):
     def __init__(self, controller, parent=None):
         super().__init__(parent)
         self.controller = controller
-        controller.setView(self)
+        controller.set_view(self)
         vstreamer_utils.load_ui("LoginDialog.ui", self)
         self.button.clicked.connect(lambda: self.controller.select_server(
             self.serverAddressEditText.toPlainText()
