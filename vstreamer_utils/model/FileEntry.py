@@ -19,6 +19,21 @@ class FileEntry(abc.ABC):
             return super().__new__(DirectoryEntry)
         return super().__new__(VideoFileEntry)
 
+    def __new__(cls,filename,isdir):
+        if cls is not FileEntry:
+            return super().__new__(cls)
+
+        if isdir:
+            return super().__new__(DirectoryEntry(filename))
+        else:
+            return super().__new__(VideoFileEntry(filename))
+
+    def __init__(self,filename):
+        self.filename = filename
+        self.properties = collections.OrderedDict()
+        self.other_properties = collections.OrderedDict()
+        self.properties["Filename"] = filename
+
     def __init__(self, file, directory_root):
         file = pathlib.Path(file)
         directory_root = pathlib.Path(directory_root)

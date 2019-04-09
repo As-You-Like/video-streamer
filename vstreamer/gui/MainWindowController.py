@@ -1,7 +1,7 @@
 from PySide2 import QtWidgets, QtCore
 from vstreamer.gui import login
-from vstreamer.gui import list
-from vstreamer.gui.list import VideoDirectoryListDialog
+
+
 
 
 class MainWindowController(QtCore.QObject):
@@ -19,9 +19,6 @@ class MainWindowController(QtCore.QObject):
             QtWidgets.QApplication.quit()
             return
 
-        video_dir_list_dialog = VideoDirectoryListDialog()
-        if video_dir_list_dialog.exec_() == QtWidgets.QDialog.DialogCode.Accepted:
-            print("test")
 
         connect_dialog = login.ConnectDialog(login.ConnectDialogController(self.server, self))
         connect_dialog.controller.connect_to_server()
@@ -36,4 +33,5 @@ class MainWindowController(QtCore.QObject):
     def _initialize_communication_socket(self):
         self.communication_socket.setParent(self)
         # TODO: error handlers etc.
+
 

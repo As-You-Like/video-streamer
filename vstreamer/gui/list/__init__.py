@@ -1,1 +1,1 @@
-from vstreamer.gui.list.VideoDirectoryListDialog import *
+from vstreamer.gui.list.VideoDirectoryListView import *
