@@ -73,32 +73,16 @@ class ImageDelegate(QStyledItemDelegate):
         self.padding =10
 
     def paint(self, painter, option, index):
-        # option.rect.translate(self.padding,self.padding)
         rect = QStyle.alignedRect(
             Qt.LayoutDirectionAuto,
             Qt.AlignCenter,
             QSize(10,10),
             option.rect
         )
-        # painter.fillRect(rect, QtGui.QColor(randint(0,255), randint(0,255), randint(0,255)))
-
+        #todo dodaj swoje zdjecie
         path = "/home/tom/Templates/test/mini.bmp"
 
-
-        image = QtGui.QImage(str(path))
         widget = ImageView(path,"TEST")
         pixmap = QtWidgets.QWidget.grab(widget,rect)
-        # pixmap = QPixmap.grabWidget(widget)
         painter.drawPixmap(rect, pixmap)
-        # painter.drawText(0, 20, "TEST")
-
-    # def createEditor(self, parent: PySide2.QtWidgets.QWidget,
-    #                  option: PySide2.QtWidgets.QStyleOptionViewItem,
-    #                  index: PySide2.QtCore.QModelIndex) -> PySide2.QtWidgets.QWidget:
-    #     widget =
-
-
-class ItemWidget(QtWidgets.QWidget):
-    def __init__(self,parent=None):
-        super().__init__(parent)
 
