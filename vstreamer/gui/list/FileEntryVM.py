@@ -1,8 +1,8 @@
 from vstreamer_utils.model import FileEntry, DirectoryInfo
 
 
-class FileEntryVM():
-    def __init__(self, filename, is_video) -> None:
+class FileEntryVM:
+    def __init__(self, filename, is_video):
         super().__init__()
         self.filename = filename
         self.is_video = is_video

@@ -2,8 +2,6 @@ from PySide2 import QtWidgets, QtCore
 from vstreamer.gui import login
 
 
-
-
 class MainWindowController(QtCore.QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -18,7 +16,6 @@ class MainWindowController(QtCore.QObject):
         else:
             QtWidgets.QApplication.quit()
             return
-
 
         connect_dialog = login.ConnectDialog(login.ConnectDialogController(self.server, self))
         connect_dialog.controller.connect_to_server()
