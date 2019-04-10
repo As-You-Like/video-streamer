@@ -6,21 +6,14 @@ from vstreamer.gui.list.FileEntryVM import FileEntryVM
 from vstreamer_utils import model
 from vstreamer_utils.model import DirectoryInfo
 
-DEBUG = False
-
-def mock_data():
-    return [
-        FileEntryVM("testowy folder 1", False),
-        FileEntryVM("testowy folder 2", False),
-        FileEntryVM("testowy video 1", True)
-    ]
+DEBUG = True
 
 def window():
     app = client.VideoStreamerApplication(sys.argv)
 
     dir_view = gui.list.DirectoryInfoView()
     if DEBUG:
-        dir_view.set_entries(mock_data())
+        dir_view.set_entries(FileEntryVM.mock_data())
     else:
         dir_view.set_entries(
             FileEntryVM.from_file_entry(DirectoryInfo("/home/tom/Videos", "/home/tom"))
