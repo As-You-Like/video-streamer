@@ -1,15 +1,16 @@
 import sys
 from PySide2 import QtWidgets
 from PySide2 import QtCore
-from vstreamer import gui
-from vstreamer.gui.list import DataMock
+from vstreamer import gui, client
+from vstreamer_utils import model
 
 
 def window():
-    app = QtWidgets.QApplication(sys.argv)
+    app = client.VideoStreamerApplication(sys.argv)
 
-    video_dir_list_dialog = gui.list.VideoDirectoryListView()
-    video_dir_list_dialog.show()
+    dir_view = gui.list.DirectoryInfoView()
+    dir_view.set_directory_info(model.DirectoryInfo("/home/artur/Films/Films/Movies/", "/home/artur"))
+    dir_view.show()
 
     # QtCore.QTimer.singleShot(1000, lambda: video_dir_list_dialog.set_data(DataMock.mock_data()))
     # window_controller = gui.MainWindowController()

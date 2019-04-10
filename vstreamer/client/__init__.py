@@ -1,1 +1,1 @@
-from vstreamer.client import *
+from vstreamer.client.VideoStreamerApplication import VideoStreamerApplication

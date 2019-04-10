@@ -1,0 +1,6 @@
+<RCC>
+    <qresource>
+        <file>icons/VideoFileIcon.png</file>
+        <file>icons/DirectoryIcon.png</file>
+    </qresource>
+</RCC>
