@@ -9,6 +9,7 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import QTableView, QVBoxLayout, QStyledItemDelegate, QHeaderView, QStyle
 
 from vstreamer.gui.list import DataMock
+from vstreamer.gui.list.ImageView import ImageView
 
 
 class VideoDirectoryListView(QtWidgets.QWidget):
@@ -79,15 +80,16 @@ class ImageDelegate(QStyledItemDelegate):
             QSize(10,10),
             option.rect
         )
-        painter.fillRect(rect, QtGui.QColor(randint(0,255), randint(0,255), randint(0,255)))
+        # painter.fillRect(rect, QtGui.QColor(randint(0,255), randint(0,255), randint(0,255)))
 
-        # path = "/home/tom/Templates/test/mini.bmp"
+        path = "/home/tom/Templates/test/mini.bmp"
 
 
-        # image = QtGui.QImage(str(path))
-        # pixmap = QtGui.QPixmap.fromImage(image)
-        # pixmap.scaled(90, 90,QtCore.Qt.IgnoreAspectRatio)
-        # painter.drawPixmap(option.rect, pixmap)
+        image = QtGui.QImage(str(path))
+        widget = ImageView(path,"TEST")
+        pixmap = QtWidgets.QWidget.grab(widget,rect)
+        # pixmap = QPixmap.grabWidget(widget)
+        painter.drawPixmap(rect, pixmap)
         # painter.drawText(0, 20, "TEST")
 
     # def createEditor(self, parent: PySide2.QtWidgets.QWidget,
