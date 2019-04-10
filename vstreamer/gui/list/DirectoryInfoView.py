@@ -6,10 +6,10 @@ from vstreamer_utils import model
 
 
 class DirectoryInfoItemModel(QtCore.QAbstractTableModel):
-    def __init__(self, directory_info, parent):
+    def __init__(self, file_entries, parent):
         super().__init__(parent)
         self._column_count = 0
-        self._directory_info = directory_info
+        self._file_entries = file_entries
 
     def set_column_count(self, column_count):
         if column_count != self._column_count:
@@ -17,35 +17,35 @@ class DirectoryInfoItemModel(QtCore.QAbstractTableModel):
             self._column_count = column_count
             self.endResetModel()
 
-    def set_directory_info(self, directory_info):
+    def set_entries(self, file_entries):
         self.beginResetModel()
-        self._directory_info = directory_info
+        self._file_entries = file_entries
         self.endResetModel()
 
     def rowCount(self, parent=QtCore.QModelIndex()):
-        if self._directory_info is None or self._column_count == 0:
+        if self._file_entries is None or self._column_count == 0:
             return 0
-        return math.ceil(len(self._directory_info.entries) / self._column_count)
+        return math.ceil(len(self._file_entries) / self._column_count)
 
     def columnCount(self, parent=QtCore.QModelIndex()):
-        if self._directory_info is None:
+        if self._file_entries is None:
             return 0
         return self._column_count
 
     def flags(self, index):
         array_idx = self._array_idx(index)
-        if array_idx is None or array_idx >= len(self._directory_info.entries):
+        if array_idx is None or array_idx >= len(self._file_entries):
             return QtCore.Qt.NoItemFlags
         return QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         array_idx = self._array_idx(index)
-        if array_idx is None or array_idx >= len(self._directory_info.entries):
+        if array_idx is None or array_idx >= len(self._file_entries):
             return None
         if role == QtCore.Qt.DisplayRole:
-            return self._directory_info.entries[array_idx]
+            return self._file_entries[array_idx]
         if role == QtCore.Qt.ToolTipRole:
-            return self._directory_info.entries[array_idx].filename
+            return self._file_entries[array_idx].filename
         if role == QtCore.Qt.SizeHintRole:
             return list.FileEntryWidget.FIXED_SIZE
         return None
@@ -106,8 +106,8 @@ class DirectoryInfoView(QtWidgets.QWidget):
         self.table_view.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.table_view.verticalHeader().setDefaultSectionSize(list.FileEntryWidget.FIXED_SIZE.height())
 
-    def set_directory_info(self, directory_info):
-        self.table_view.model().set_directory_info(directory_info)
+    def set_entries(self, directory_info):
+        self.table_view.model().set_entries(directory_info)
 
     def resizeEvent(self, event):
         column_count = self.table_view.size().width() // list.FileEntryWidget.FIXED_SIZE.width()

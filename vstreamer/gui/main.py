@@ -2,14 +2,29 @@ import sys
 from PySide2 import QtWidgets
 from PySide2 import QtCore
 from vstreamer import gui, client
+from vstreamer.gui.list.FileEntryVM import FileEntryVM
 from vstreamer_utils import model
+from vstreamer_utils.model import DirectoryInfo
 
+DEBUG = False
+
+def mock_data():
+    return [
+        FileEntryVM("testowy folder 1", False),
+        FileEntryVM("testowy folder 2", False),
+        FileEntryVM("testowy video 1", True)
+    ]
 
 def window():
     app = client.VideoStreamerApplication(sys.argv)
 
     dir_view = gui.list.DirectoryInfoView()
-    dir_view.set_directory_info(model.DirectoryInfo("/home/artur/Films/Films/Movies/", "/home/artur"))
+    if DEBUG:
+        dir_view.set_entries(mock_data())
+    else:
+        dir_view.set_entries(
+            FileEntryVM.from_file_entry(DirectoryInfo("/home/tom/Videos", "/home/tom"))
+        )
     dir_view.show()
 
     # QtCore.QTimer.singleShot(1000, lambda: video_dir_list_dialog.set_data(DataMock.mock_data()))
@@ -24,3 +39,5 @@ def window():
 
 
 window()
+
+
