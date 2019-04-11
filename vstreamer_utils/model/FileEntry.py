@@ -6,6 +6,7 @@ import copy
 import time
 import datetime
 import pymediainfo
+from vstreamer_utils import model
 
 
 class FileEntry(abc.ABC):
@@ -30,6 +31,10 @@ class FileEntry(abc.ABC):
         self.creation_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(stat.st_ctime))
         self.modification_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(stat.st_mtime))
 
+        # additional
+        self.description = None
+        self.image = None
+
         self.properties = collections.OrderedDict()
         self.other_properties = collections.OrderedDict()
 
@@ -44,11 +49,20 @@ class FileEntry(abc.ABC):
         ...
 
     def light_copy(self):
-        # prototype version - creates light version of object
         copied = copy.deepcopy(self)
-        del copied.other_properties["Description"]
-        del copied.other_properties["Image"]
+        copied.description = None
+        copied.image = None
         return copied
+
+    def additional_properties(self):
+        return model.AdditionalEntryProperties.from_file_entry(self)
+
+    def apply_additional_properties(self, additional_properties):
+        if additional_properties.title is None:
+            self.filename = str(pathlib.Path(self.path).name)
+            self.properties["Filename"] = self.filename
+        self.description = additional_properties.description
+        self.image = additional_properties.image
 
 
 class DirectoryEntry(FileEntry):

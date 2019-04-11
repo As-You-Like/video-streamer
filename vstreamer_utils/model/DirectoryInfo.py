@@ -12,8 +12,8 @@ class DirectoryInfo:
         self.name = str(path.name)
         self.path = str(path.relative_to(directory_root))
 
-        def key(file):
-            return not file.is_dir(), file
+        def key(file_entry):
+            return file_entry.is_video(), file_entry.filename
 
-        self.entries = [model.FileEntry(x, directory_root) for x in sorted(path.iterdir(), key=key)
-                        if x.is_dir() or vstreamer_utils.is_video_file(x)]
+        self.entries = sorted([model.FileEntry(x, directory_root) for x in path.iterdir()
+                               if x.is_dir() or vstreamer_utils.is_video_file(x)], key=key)
