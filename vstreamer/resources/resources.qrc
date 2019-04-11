@@ -1,5 +1,6 @@
 <RCC>
     <qresource>
+        <file>icons/Avatar.png</file>
         <file>icons/VideoFileIcon.png</file>
         <file>icons/DirectoryIcon.png</file>
     </qresource>

@@ -17,10 +17,10 @@ class MainWindowController(QtCore.QObject):
             QtWidgets.QApplication.quit()
             return
 
-        connect_dialog = login.ConnectDialog(login.ConnectDialogController(self.server, self))
-        connect_dialog.controller.connect_to_server()
+        connect_dialog = login.ConnectDialog(self.server)
+        connect_dialog.connect_to_server()
         if connect_dialog.exec_() == QtWidgets.QDialog.DialogCode.Accepted:
-            self.communication_socket = connect_dialog.controller.socket
+            self.communication_socket = connect_dialog.socket
             self._initialize_communication_socket()
         else:
             QtWidgets.QApplication.quit()
