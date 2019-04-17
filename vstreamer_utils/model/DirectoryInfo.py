@@ -10,7 +10,7 @@ class DirectoryInfo:
         if not path.is_dir():
             raise ValueError("'%s' is not a directory" % str(path))
         self.name = str(path.name)
-        self.path = str(path.relative_to(directory_root))
+        self.path = "/" + str(path.relative_to(directory_root))
 
         def key(file_entry):
             return file_entry.is_video(), file_entry.filename

@@ -1,6 +1,6 @@
 import math
 from PySide2 import QtWidgets, QtGui, QtCore
-from vstreamer.gui import list
+from vstreamer.client import list
 import vstreamer_utils
 from vstreamer_utils import model
 
@@ -92,8 +92,7 @@ class ImageDelegate(QtWidgets.QStyledItemDelegate):
 
 
 class DirectoryInfoView(QtWidgets.QWidget):
-    # TODO
-    path_requested = QtCore.Signal(str)
+    path_requested = QtCore.Signal(str)  # TODO - selection
 
     def __init__(self, directory_info=None, parent=None):
         super().__init__(parent)

@@ -1,31 +1,35 @@
 import vstreamer_utils
-import pathlib
+from PySide2 import QtCore
 import gi
 gi.require_version("GstRtspServer", "1.0")
 from gi.repository import GstRtspServer
 
 
-class VideoServer:
-    def __init__(self, port, directory_root):
+class VideoServer(QtCore.QObject):
+    def __init__(self, port, directory_tree, parent=None):
+        super().__init__(parent)
         self.port = int(port)
-        self.directory_root = pathlib.Path(directory_root).absolute()
         self.server = GstRtspServer.RTSPServer.new()
         self.server.set_service(str(self.port))
 
-    def add_media(self, file):
-        file = pathlib.Path(file).absolute()
+        for _, directory_info in directory_tree.directories.items():
+            for file_entry in directory_info.entries:
+                if file_entry.is_video():
+                    self._add_media(file_entry.path, directory_tree.directory_root)
+
+    def _add_media(self, file_path, directory_root):
+        file = directory_root / file_path[1:]
         if not vstreamer_utils.is_video_file(file):
             raise ValueError("'%s' is not a valid video file" % str(file))
 
         demuxer = VideoServer._corresponding_demuxer(file)
-        server_subpath = "/" + str(file.relative_to(self.directory_root))
-        pipeline = "filesrc location=%s ! %s name=dmux " \
+        pipeline = "filesrc location=\"%s\" ! %s name=dmux " \
                    "dmux.video_0 ! queue ! rtph264pay name=pay0 pt=96 " \
                    "dmux.audio_0 ! queue ! rtpmp4apay name=pay1" % (file, demuxer)
         factory = GstRtspServer.RTSPMediaFactory()
         factory.set_launch(pipeline)
         factory.set_shared(True)
-        self.server.get_mount_points().add_factory(server_subpath, factory)
+        self.server.get_mount_points().add_factory(file_path.replace(' ', '_'), factory)
 
     def start(self, context=None):
         self.server.attach(context)

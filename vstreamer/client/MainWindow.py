@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtCore
-from vstreamer import gui
+from vstreamer import client
 import vstreamer_utils
 
 

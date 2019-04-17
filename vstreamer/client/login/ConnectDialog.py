@@ -9,11 +9,6 @@ class ConnectDialog(QtWidgets.QDialog):
         self.server = server
         self.socket = None
 
-    def end_with_error(self, msg):
-        QtWidgets.QMessageBox.critical(self, "Video Streamer",
-                                       "Could not connect to remote server - " + msg)
-        self.reject()
-
     def connect_to_server(self):
         self.socket = QtNetwork.QTcpSocket()
         self.socket.connected.connect(self._handle_connected)
@@ -30,4 +25,9 @@ class ConnectDialog(QtWidgets.QDialog):
 
     def _handle_error(self, code):
         self._disconnect_signals()
-        self.end_with_error(self.socket.errorString())
+        self._end_with_error(self.socket.errorString())
+
+    def _end_with_error(self, msg):
+        QtWidgets.QMessageBox.critical(self, "Video Streamer",
+                                       "Could not connect to remote server - " + msg)
+        self.reject()

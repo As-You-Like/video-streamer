@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtCore
-from vstreamer.gui import login
+from vstreamer.client import login
 
 
 class MainWindowController(QtCore.QObject):
