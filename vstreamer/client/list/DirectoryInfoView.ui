@@ -77,6 +77,21 @@
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>-1</x>
+        <y>19</y>
+        <width>231</width>
+        <height>501</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="properties_widget_layout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetNoConstraint</enum>
+       </property>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

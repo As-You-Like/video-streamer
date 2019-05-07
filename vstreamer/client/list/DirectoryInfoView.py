@@ -1,8 +1,10 @@
 import math
 from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSpacerItem, QSizePolicy
+
 from vstreamer.client import list
 import vstreamer_utils
-from vstreamer_utils import model
+from vstreamer.client.list import FileEntryVM
 
 
 class DirectoryInfoItemModel(QtCore.QAbstractTableModel):
@@ -85,7 +87,8 @@ class ImageDelegate(QtWidgets.QStyledItemDelegate):
         if option.state & QtWidgets.QStyle.State_Selected != 0:
             focus = QtWidgets.QStyleOptionFocusRect()
             focus.rect = option.rect
-            QtWidgets.QApplication.style().drawPrimitive(QtWidgets.QStyle.PE_FrameFocusRect, focus, painter)
+            QtWidgets.QApplication.style().drawPrimitive(QtWidgets.QStyle.PE_FrameFocusRect, focus,
+                                                         painter)
         widget.render(painter, painter.deviceTransform().map(option.rect.topLeft()),
                       renderFlags=QtWidgets.QWidget.DrawChildren)
         painter.restore()
@@ -100,10 +103,18 @@ class DirectoryInfoView(QtWidgets.QWidget):
         self.table_view.setModel(DirectoryInfoItemModel(directory_info, self))
         self.table_view.setItemDelegate(ImageDelegate(self.table_view))
         self.table_view.resizeColumnsToContents()
-        self.table_view.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-        self.table_view.horizontalHeader().setDefaultSectionSize(list.FileEntryWidget.FIXED_SIZE.width())
-        self.table_view.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-        self.table_view.verticalHeader().setDefaultSectionSize(list.FileEntryWidget.FIXED_SIZE.height())
+        self.table_view.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
+        self.table_view.horizontalHeader().setDefaultSectionSize(
+            list.FileEntryWidget.FIXED_SIZE.width())
+        self.table_view.verticalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
+        self.table_view.verticalHeader().setDefaultSectionSize(
+            list.FileEntryWidget.FIXED_SIZE.height())
+        self.setup_properties(FileEntryVM.FileEntryVM("testowy folder 1", False, dict(
+            prop1="test1",
+            prop2="test2"
+        )))
 
     def set_entries(self, directory_info):
         self.table_view.model().set_entries(directory_info)
@@ -112,3 +123,15 @@ class DirectoryInfoView(QtWidgets.QWidget):
         column_count = self.table_view.size().width() // list.FileEntryWidget.FIXED_SIZE.width()
         self.table_view.model().set_column_count(column_count)
         super().resizeEvent(event)
+
+    def setup_properties(self, fileEntryVM: FileEntryVM):
+        # todo clear layout before adding new widget
+        # self.properties_widget_layout.remove
+        for key, value in fileEntryVM.properties.items():
+            line = QWidget()
+            vstreamer_utils.load_ui("properties_item.ui", line)
+            line.left_label.setText(key)
+            line.right_label.setText(value)
+            self.properties_widget_layout.addWidget(line)
+        # todo not working
+        # self.properties_widget_layout.addStretch(1)
