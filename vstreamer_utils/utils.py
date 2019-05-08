@@ -5,7 +5,7 @@ from PySide2 import QtUiTools
 
 
 # not imported
-from vstreamer.client.list import DirectoryInfoView
+from vstreamer.client.list import DirectoryInfoView, PropertiesWidget
 from vstreamer.client.player import VideoPlayer
 
 
@@ -13,9 +13,10 @@ class _SelfUILoader(QtUiTools.QUiLoader):
     def __init__(self, widget):
         QtUiTools.QUiLoader.__init__(self, widget)
         self.widget = widget
-        self.customWidgets = dict()
-        self.customWidgets[VideoPlayer.__name__] = VideoPlayer
-        self.customWidgets[DirectoryInfoView.__name__] = DirectoryInfoView
+        self.custom_widgets = dict()
+        self.custom_widgets[DirectoryInfoView.__name__] = DirectoryInfoView
+        self.custom_widgets[PropertiesWidget.__name__] = PropertiesWidget
+        self.custom_widgets[VideoPlayer.__name__] = VideoPlayer
 
     def createWidget(self, class_name, parent=None, name=''):
         if parent is None and self.widget:
@@ -25,7 +26,7 @@ class _SelfUILoader(QtUiTools.QUiLoader):
                 widget = QtUiTools.QUiLoader.createWidget(self, class_name, parent, name)
             else:
                 try:
-                    widget = self.customWidgets[class_name](parent=parent)
+                    widget = self.custom_widgets[class_name](parent=parent)
                 except (TypeError, KeyError) as e:
                     raise Exception(
                         'No custom widget ' + class_name + ' found in customWidgets param of UiLoader __init__.')

@@ -4,7 +4,7 @@ import vstreamer_utils
 from vstreamer.client.list import FileEntryVM, PropertiesItemWidget
 
 
-class PropertiesWidget(QtWidgets.QWidget):
+class PropertiesWidget(QtWidgets.QGroupBox):
     FIXED_SIZE = QtCore.QSize(120, 140)
 
     def __init__(self, parent=None):
@@ -18,6 +18,6 @@ class PropertiesWidget(QtWidgets.QWidget):
             line = PropertiesItemWidget()
             line.left_label.setText(key)
             line.right_label.setText(value)
-            self.properties_widget_layout.addWidget(line)
+            self.main_layout.addWidget(line)
         # todo not working
         # self.properties_widget_layout.addStretch(1)

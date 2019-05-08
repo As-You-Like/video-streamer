@@ -34,7 +34,7 @@
       <height>301</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="groupbox_vertical_layout"/>
+    <layout class="QVBoxLayout" name="main_layout"/>
    </widget>
   </widget>
  </widget>
