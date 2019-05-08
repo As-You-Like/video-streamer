@@ -111,7 +111,7 @@ class DirectoryInfoView(QtWidgets.QWidget):
             QtWidgets.QHeaderView.ResizeToContents)
         self.table_view.verticalHeader().setDefaultSectionSize(
             list.FileEntryWidget.FIXED_SIZE.height())
-        self.setup_properties(FileEntryVM.FileEntryVM("testowy folder 1", False, dict(
+        self.properties_widget.setup_properties(FileEntryVM.FileEntryVM("testowy folder 1", False, dict(
             prop1="test1",
             prop2="test2"
         )))
@@ -124,14 +124,4 @@ class DirectoryInfoView(QtWidgets.QWidget):
         self.table_view.model().set_column_count(column_count)
         super().resizeEvent(event)
 
-    def setup_properties(self, fileEntryVM: FileEntryVM):
-        # todo clear layout before adding new widget
-        # self.properties_widget_layout.remove
-        for key, value in fileEntryVM.properties.items():
-            line = QWidget()
-            vstreamer_utils.load_ui("properties_item.ui", line)
-            line.left_label.setText(key)
-            line.right_label.setText(value)
-            self.properties_widget_layout.addWidget(line)
-        # todo not working
-        # self.properties_widget_layout.addStretch(1)
+
