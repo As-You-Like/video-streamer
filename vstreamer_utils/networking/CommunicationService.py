@@ -10,7 +10,6 @@ class MessageHeader:
 
     def __init__(self, size):
         self.size = size
-        print(size)
 
     def to_data(self):
         return MessageHeader.HEADER + struct.pack("!Q", self.size)
@@ -27,6 +26,7 @@ class MessageHeader:
 class CommunicationService(QtCore.QObject):
     received_request = QtCore.Signal(networking.Request)
     received_response = QtCore.Signal(networking.Response)
+    disconnected = QtCore.Signal()
     error_occurred = QtCore.Signal(str)
 
     def __init__(self, socket, parent=None):
@@ -53,8 +53,10 @@ class CommunicationService(QtCore.QObject):
         self.socket.readyRead.connect(self._handle_data_ready)
 
     def _handle_disconnected(self):
-        self.socket.setErrorString("Connection lost")
-        self._handle_error()
+        self.socket.disconnected.disconnect(self._handle_disconnected)
+        self.socket.error.disconnect(self._handle_error)
+        self.socket.readyRead.disconnect(self._handle_data_ready)
+        self.disconnected.emit()
 
     def _handle_error(self):
         self.socket.disconnected.disconnect(self._handle_disconnected)

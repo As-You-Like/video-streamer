@@ -9,4 +9,4 @@ class AdditionalEntryProperties:
 
     @staticmethod
     def from_file_entry(file_entry):
-        return AdditionalEntryProperties(file_entry.filename, file_entry.description, file_entry.image)
+        return AdditionalEntryProperties(file_entry.properties["Filename"], file_entry.description, file_entry.image)

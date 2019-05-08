@@ -1,9 +1,56 @@
 from PySide2 import QtCore
 from vstreamer_utils import networking
+import pathlib
 
 
 class RequestHandler(QtCore.QObject):
-    def __init__(self, communication_service, parent=None):
+    def __init__(self, communication_service, directory_tree, parent=None):
         super().__init__(parent)
         self.communication_service = communication_service
-        # TODO
+        self.directory_tree = directory_tree
+        self.communication_service.received_request.connect(self._handle_request)
+
+    def _handle_request(self, request):
+        if not isinstance(request, networking.Request):
+            # todo add log
+            self.communication_service.write_message(networking.ErrorResponse("Received message that is not a request"))
+            return
+        if isinstance(request, networking.DirectoryInfoRequest):
+            self._handle_directory_info_request(request)
+        elif isinstance(request, networking.AdditionalEntryPropertiesRequest):
+            self._handle_additional_entry_properties_request(request)
+        else:
+            # todo add log
+            self.communication_service.write_message(networking.ErrorResponse("Received invalid request"))
+            return
+
+    def _handle_directory_info_request(self, request):
+        if request.path not in self.directory_tree.directories:
+            # todo add log
+            self.communication_service.write_message(
+                networking.ErrorResponse("Directory '%s' does not exist" % request.path))
+            return
+        entries = self.directory_tree.directories[request.path].light_copy()
+        self.communication_service.write_message(networking.DirectoryInfoResponse(entries))
+
+    def _handle_additional_entry_properties_request(self, request):
+        path_object = pathlib.Path(request.filepath)
+        dir_path = str(path_object.parent)
+        filename = str(path_object.name)
+
+        if dir_path not in self.directory_tree.directories:
+            # todo add log
+            self.communication_service.write_message(
+                networking.ErrorResponse("Directory '%s' does not exist" % request.path))
+            return
+
+        directory_entry = self.directory_tree.directories[dir_path]
+        for entry in directory_entry.entries:
+            if filename == entry.filename:
+                self.communication_service.write_message(
+                    networking.AdditionalEntryPropertiesResponse(request.filepath, entry.additional_properties()))
+                return
+
+        # todo add log
+        self.communication_service.write_message(
+            networking.ErrorResponse("File '%s' does not exist" % request.filepath))

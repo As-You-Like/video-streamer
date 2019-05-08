@@ -59,7 +59,6 @@ class FileEntry(abc.ABC):
 
     def apply_additional_properties(self, additional_properties):
         if additional_properties.title is None:
-            self.filename = str(pathlib.Path(self.path).name)
             self.properties["Filename"] = self.filename
         self.description = additional_properties.description
         self.image = additional_properties.image
