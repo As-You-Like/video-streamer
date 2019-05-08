@@ -13,14 +13,22 @@ class _SelfUILoader(QtUiTools.QUiLoader):
     def __init__(self, widget):
         QtUiTools.QUiLoader.__init__(self, widget)
         self.widget = widget
-        self.registerCustomWidget(VideoPlayer)
-        self.registerCustomWidget(DirectoryInfoView)
+        self.customWidgets = dict()
+        self.customWidgets[VideoPlayer.__name__] = VideoPlayer
+        self.customWidgets[DirectoryInfoView.__name__] = DirectoryInfoView
 
     def createWidget(self, class_name, parent=None, name=''):
         if parent is None and self.widget:
             return self.widget
         else:
-            widget = QtUiTools.QUiLoader.createWidget(self, class_name, parent, name)
+            if class_name in self.availableWidgets():
+                widget = QtUiTools.QUiLoader.createWidget(self, class_name, parent, name)
+            else:
+                try:
+                    widget = self.customWidgets[class_name](parent=parent)
+                except (TypeError, KeyError) as e:
+                    raise Exception(
+                        'No custom widget ' + class_name + ' found in customWidgets param of UiLoader __init__.')
             if self.widget:
                 setattr(self.widget, name, widget)
             return widget

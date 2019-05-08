@@ -1,5 +1,4 @@
-from PyQt4.QtGui import QWidget
-from pyside2uic.properties import QtWidgets, QtCore
+from PySide2 import QtWidgets, QtCore
 
 import vstreamer_utils
 from vstreamer.client.list import FileEntryVM, PropertiesItemWidget
