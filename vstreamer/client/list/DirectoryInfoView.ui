@@ -30,72 +30,59 @@
     <number>20</number>
    </property>
    <item>
-    <widget class="QTableView" name="table_view">
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <property name="selectionMode">
-      <enum>QAbstractItemView::SingleSelection</enum>
-     </property>
-     <property name="verticalScrollMode">
-      <enum>QAbstractItemView::ScrollPerPixel</enum>
-     </property>
-     <property name="horizontalScrollMode">
-      <enum>QAbstractItemView::ScrollPerPixel</enum>
-     </property>
-     <property name="showGrid">
-      <bool>false</bool>
-     </property>
-     <attribute name="horizontalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="horizontalHeaderMinimumSectionSize">
-      <number>0</number>
-     </attribute>
-     <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderMinimumSectionSize">
-      <number>0</number>
-     </attribute>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="properties_widget">
-     <property name="minimumSize">
-      <size>
-       <width>250</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="title">
-      <string>Properties</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <widget class="QWidget" name="verticalLayoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>-1</x>
-        <y>19</y>
-        <width>231</width>
-        <height>501</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="properties_widget_layout">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetNoConstraint</enum>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QTableView" name="table_view">
+       <property name="enabled">
+        <bool>true</bool>
        </property>
-      </layout>
-     </widget>
-    </widget>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SingleSelection</enum>
+       </property>
+       <property name="verticalScrollMode">
+        <enum>QAbstractItemView::ScrollPerPixel</enum>
+       </property>
+       <property name="horizontalScrollMode">
+        <enum>QAbstractItemView::ScrollPerPixel</enum>
+       </property>
+       <property name="showGrid">
+        <bool>false</bool>
+       </property>
+       <attribute name="horizontalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderMinimumSectionSize">
+        <number>0</number>
+       </attribute>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="verticalHeaderMinimumSectionSize">
+        <number>0</number>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="PropertiesWidget" name="properties" native="true"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PropertiesWidget</class>
+   <extends>QWidget</extends>
+   <header>propertieswidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
