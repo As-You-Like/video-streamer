@@ -8,3 +8,5 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__(parent)
         self.controller = controller
         self.controller.view = self
+        vstreamer_utils.load_ui("MainWindow.ui", self)
+

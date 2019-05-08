@@ -1,3 +1,5 @@
+import this
+
 from PySide2 import QtCore, QtWidgets, QtMultimediaWidgets
 import platform
 import vlc

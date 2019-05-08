@@ -5,10 +5,16 @@ from PySide2 import QtUiTools
 
 
 # not imported
+from vstreamer.client.list import DirectoryInfoView
+from vstreamer.client.player import VideoPlayer
+
+
 class _SelfUILoader(QtUiTools.QUiLoader):
     def __init__(self, widget):
         QtUiTools.QUiLoader.__init__(self, widget)
         self.widget = widget
+        self.registerCustomWidget(VideoPlayer)
+        self.registerCustomWidget(DirectoryInfoView)
 
     def createWidget(self, class_name, parent=None, name=''):
         if parent is None and self.widget:
@@ -18,7 +24,6 @@ class _SelfUILoader(QtUiTools.QUiLoader):
             if self.widget:
                 setattr(self.widget, name, widget)
             return widget
-
 
 SERVER_PORT = 5655
 SERVER_VIDEO_PORT = 5656
