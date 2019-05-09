@@ -69,7 +69,14 @@
       </widget>
      </item>
      <item>
-      <widget class="PropertiesWidget" name="properties_widget" native="true"/>
+         <widget name="properties_widget" class="PropertiesWidget" native="true">
+             <property name="minimumSize">
+                 <size>
+                     <width>200</width>
+                     <height>0</height>
+                 </size>
+             </property>
+         </widget>
      </item>
     </layout>
    </item>

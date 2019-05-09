@@ -1,4 +1,5 @@
 from PySide2 import QtCore
+
 from vstreamer_server import server, config
 from vstreamer_utils import model
 
@@ -7,6 +8,7 @@ class ServerController(QtCore.QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.configuration = config.Configuration(config.get_config_directory(QtCore.QCoreApplication.applicationName()))
+        self.configuration.write_config()
         self.directory_tree = model.DirectoryTree(self.configuration.config.base_directory)
         self.communication_server = server.CommunicationServer(self.configuration.config.starting_port,
                                                                self.directory_tree, self)

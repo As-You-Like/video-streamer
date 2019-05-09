@@ -14,34 +14,25 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>20</y>
-      <width>621</width>
-      <height>541</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="DirectoryInfoView" name="widget_2" native="true"/>
-     </item>
-     <item>
-      <widget class="VideoPlayer" name="widget" native="true"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>22</height>
-    </rect>
-   </property>
+      <layout name="verticalLayout_2" class="QVBoxLayout">
+          <item>
+              <widget name="tabWidget" class="QTabWidget">
+                  <property name="currentIndex">
+                      <number>1</number>
+                  </property>
+                  <widget name="video_player" class="VideoPlayer">
+                      <attribute name="title">
+                          <string>Tab 1</string>
+                      </attribute>
+                  </widget>
+                  <widget name="directory_info_view" class="DirectoryInfoView">
+                      <attribute name="title">
+                          <string>Tab 2</string>
+                      </attribute>
+                  </widget>
+              </widget>
+          </item>
+      </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

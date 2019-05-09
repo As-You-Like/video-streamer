@@ -1,8 +1,8 @@
 import sys
+
+from PySide2 import QtCore
+
 from vstreamer import application, client
-from vstreamer.client import list, player
-from vstreamer_utils.model import DirectoryInfo
-DEBUG = True
 
 
 def main():
@@ -25,10 +25,9 @@ def main():
     # video_player.play_video(dummy)
     # video_player.show()
 
-    main_window_controller = client.MainWindowController()
-    main_window = client.MainWindow(main_window_controller)
-    #QtCore.QTimer.singleShot(0, main_window_controller.connect_to_server)
-    main_window.show()
+    main_window = client.MainWindow()
+    QtCore.QTimer.singleShot(0, main_window.connect_to_server)
+    # main_window.show()
 
     app.exec_()
 

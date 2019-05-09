@@ -1,9 +1,9 @@
 import math
-from PySide2 import QtWidgets, QtGui, QtCore
-from PySide2.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSpacerItem, QSizePolicy
 
-from vstreamer.client import list
+from PySide2 import QtWidgets, QtGui, QtCore
+
 import vstreamer_utils
+from vstreamer.client import list
 from vstreamer.client.list import FileEntryVM
 
 
@@ -111,10 +111,18 @@ class DirectoryInfoView(QtWidgets.QWidget):
             QtWidgets.QHeaderView.ResizeToContents)
         self.table_view.verticalHeader().setDefaultSectionSize(
             list.FileEntryWidget.FIXED_SIZE.height())
-        self.properties_widget.setup_properties(FileEntryVM.FileEntryVM("testowy folder 1", False, dict(
+        self.properties_widget.set_properties(
+            FileEntryVM.FileEntryVM("testowy folder 1", False, dict(
             prop1="test1",
             prop2="test2"
         )))
+        self.table_view.selectionModel().currentChanged.connect(self.handle_current_changed)
+
+    def handle_current_changed(self, new_selection):
+        if new_selection.isValid():
+            self.properties_widget.set_properties(new_selection.data())
+        else:
+            self.properties_widget.clear()
 
     def set_entries(self, directory_info):
         self.table_view.model().set_entries(directory_info)
