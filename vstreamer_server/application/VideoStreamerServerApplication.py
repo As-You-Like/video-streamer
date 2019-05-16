@@ -16,6 +16,8 @@ class VideoStreamerServerApplication(QtCore.QCoreApplication):
 
     def _make_logger(self):
         logging.basicConfig(datefmt="%Y.%m.%d %H:%M:%S", format="[%(asctime)s] %(name)s[%(levelname)s]: %(message)s")
+        app_name = QtCore.QCoreApplication.applicationName()
+        logger = logging.getLogger(app_name)
         logger.setLevel(logging.INFO)
         logger = logging.getLogger(self.applicationName())
         return logger
