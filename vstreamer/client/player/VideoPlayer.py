@@ -1,6 +1,9 @@
-from PySide2 import QtCore, QtWidgets, QtMultimediaWidgets
 import platform
+
 import vlc
+from PySide2 import QtCore, QtWidgets, QtMultimediaWidgets
+
+from vstreamer.client.player import VideoPlayerBar
 
 
 class VideoPlayer(QtWidgets.QWidget):
@@ -9,10 +12,12 @@ class VideoPlayer(QtWidgets.QWidget):
         self.remote_host = None
         self.port = None
 
-        self.layout = QtWidgets.QHBoxLayout(self)
+        self.layout = QtWidgets.QVBoxLayout(self)
         self.player_widget = QtMultimediaWidgets.QVideoWidget(self)
         self.layout.addWidget(self.player_widget)
         self.setLayout(self.layout)
+        self.bar = VideoPlayerBar(self)
+        self.layout.addWidget(self.bar)
         self.setMinimumSize(500, 500)
 
         self._instance = vlc.Instance()
@@ -27,7 +32,7 @@ class VideoPlayer(QtWidgets.QWidget):
             raise RuntimeError("Multimedia is not supported on this platform")
 
         self._timer = QtCore.QTimer(self)
-        self._timer.setSingleShot(True)
+        self._timer.setSingleShot(False)
         self._timer.setInterval(100)
         self._timer.timeout.connect(self._update_ui)
         self._update_ui()
@@ -42,7 +47,14 @@ class VideoPlayer(QtWidgets.QWidget):
         media.parse()
         self._player.set_media(media)
         self._player.play()
+        self.bar.set_playing(True)
+        self._timer.start()
 
     def _update_ui(self):
-        # TODO
-        pass
+        curr_time = self._player.get_time()
+        full_length = self._player.get_length()
+        print(str(curr_time) + " " + str(full_length))
+        if curr_time == full_length:
+            self._timer.stop()
+            self.bar.set_playing(False)
+        self.bar.set_current_video_time(curr_time, full_length)

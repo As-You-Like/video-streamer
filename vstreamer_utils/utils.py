@@ -7,7 +7,7 @@ from PySide2 import QtUiTools
 
 # not imported
 from vstreamer.client.list import DirectoryInfoView, PropertiesWidget
-from vstreamer.client.player import VideoPlayer
+from vstreamer.client.player import VideoPlayer, VideoPlayerBar
 
 
 class _SelfUILoader(QtUiTools.QUiLoader):
@@ -18,6 +18,7 @@ class _SelfUILoader(QtUiTools.QUiLoader):
         self.custom_widgets[DirectoryInfoView.__name__] = DirectoryInfoView
         self.custom_widgets[PropertiesWidget.__name__] = PropertiesWidget
         self.custom_widgets[VideoPlayer.__name__] = VideoPlayer
+        self.custom_widgets[VideoPlayerBar.__name__] = VideoPlayerBar
 
     def createWidget(self, class_name, parent=None, name=''):
         if parent is None and self.widget:

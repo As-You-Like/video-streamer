@@ -3,5 +3,7 @@
         <file>icons/Avatar.png</file>
         <file>icons/VideoFileIcon.png</file>
         <file>icons/DirectoryIcon.png</file>
+        <file>icons/Play.png</file>
+        <file>icons/Pause.png</file>
     </qresource>
 </RCC>
