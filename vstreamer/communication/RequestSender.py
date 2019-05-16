@@ -3,7 +3,7 @@ from vstreamer_utils.networking import DirectoryInfoRequest, AdditionalEntryProp
 
 
 class RequestSender(QObject):
-    def __init__(self, communication_service, parent):
+    def __init__(self, communication_service, parent=None):
         super().__init__(parent)
         self.communication_service = communication_service
 

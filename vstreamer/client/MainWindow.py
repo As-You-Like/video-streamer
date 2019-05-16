@@ -51,7 +51,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.communication_socket.setParent(self)
         self.communication_service = CommunicationService(self.communication_socket, self)
         self.response_handler = ResponseHandler(self.communication_service, self)
-        self.request_sender = RequestSender(self.communication_service)
+        self.request_sender = RequestSender(self.communication_service, self)
 
         self.request_sender.get_directory_info()
 
