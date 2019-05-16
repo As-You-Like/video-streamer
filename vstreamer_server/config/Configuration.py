@@ -3,7 +3,6 @@ import pathlib
 from PySide2 import QtCore
 import vstreamer_utils
 
-
 def get_config_directory(subdir_name):
     uid = os.getuid()
     base_config_dir = None

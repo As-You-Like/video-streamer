@@ -2,8 +2,8 @@ from PySide2 import QtWidgets
 
 import vstreamer_utils
 from vstreamer.client import login
-from vstreamer.client.communication.RequestSender import RequestSender
-from vstreamer.client.communication.ResponseHandler import ResponseHandler
+from vstreamer.communication.RequestSender import RequestSender
+from vstreamer.communication.ResponseHandler import ResponseHandler
 from vstreamer.client.list import FileEntryVM
 from vstreamer.client.login import LoginDialog
 from vstreamer_utils.networking import CommunicationService

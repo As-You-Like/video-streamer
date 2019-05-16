@@ -1,1 +1,2 @@
+from vstreamer_utils.Error import ErrorLevel, Error
 from vstreamer_utils.utils import SERVER_PORT, SERVER_VIDEO_PORT, is_video_file, load_ui, size_to_string

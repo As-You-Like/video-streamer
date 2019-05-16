@@ -1,8 +1,7 @@
 import pickle
 import struct
-
 from PySide2 import QtCore, QtNetwork
-
+import vstreamer_utils
 from vstreamer_utils import networking
 
 
@@ -28,8 +27,8 @@ class MessageHeader:
 class CommunicationService(QtCore.QObject):
     received_request = QtCore.Signal(networking.Request)
     received_response = QtCore.Signal(networking.Response)
-    disconnected = QtCore.Signal()
-    error_occurred = QtCore.Signal(str)
+    disconnected = QtCore.Signal(QtNetwork.QTcpSocket)
+    error_occurred = QtCore.Signal(vstreamer_utils.Error)
 
     def __init__(self, socket, parent=None):
         super().__init__(parent)
@@ -58,7 +57,7 @@ class CommunicationService(QtCore.QObject):
         self.socket.disconnected.disconnect(self._handle_disconnected)
         self.socket.error.disconnect(self._handle_error)
         self.socket.readyRead.disconnect(self._handle_data_ready)
-        self.disconnected.emit()
+        self.disconnected.emit(self.socket)
 
     def _handle_error(self):
         self.socket.disconnected.disconnect(self._handle_disconnected)

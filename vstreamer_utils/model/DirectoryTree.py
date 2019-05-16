@@ -14,3 +14,6 @@ class DirectoryTree:
             if file.is_dir():
                 relative = "/" + str(file.relative_to(self.directory_root))
                 self.directories[relative] = model.DirectoryInfo(file, self.directory_root)
+
+    def store_info(self):
+        pass

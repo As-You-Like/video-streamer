@@ -16,8 +16,8 @@ class ResponseHandler(QObject):
 
     def handle_response(self, response):
         if isinstance(response, DirectoryInfoResponse):
-            ResponseHandler.directories_ready.emit(response.directory_info)
+            self.directories_ready.emit(response.directory_info)
         elif isinstance(response, AdditionalEntryProperties):
-            ResponseHandler.additional_properties_ready.emit(response.filepath,
+            self.additional_properties_ready.emit(response.filepath,
                                                              response.additional_properties)
         # ErrorHandler.Error.UNKNOWN_RESPONSE
