@@ -6,25 +6,27 @@ from PySide2 import QtCore
 
 class ErrorHandler:
     def __init__(self):
-        app_name = QtCore.QCoreApplication.applicationName()
-        self.logger = logging.getLogger(app_name)
+        pass
 
-    def handle_error(self, error):
-        logger = self._get_logging_function(error)
+    @staticmethod
+    def handle_error(error):
+        logger = ErrorHandler._get_logging_function(error)
         logger(str(error))
         if error.level == vstreamer_utils.ErrorLevel.CRITICAL:
             QtCore.QCoreApplication.exit(1)
             sys.exit(1)
 
-    def handle_exception(self, exception):
-        self.handle_error(vstreamer_utils.Error("Exception occurred: " + str(exception),
-                                                vstreamer_utils.ErrorLevel.CRITICAL))
+    @staticmethod
+    def handle_exception(exception):
+        ErrorHandler.handle_error(vstreamer_utils.Error("Exception occurred: " + str(exception),
+                                  vstreamer_utils.ErrorLevel.CRITICAL))
 
-    def _get_logging_function(self, error):
+    @staticmethod
+    def _get_logging_function(error):
         if error.level == vstreamer_utils.ErrorLevel.WARNING:
-            return self.logger.warning
+            return QtCore.QCoreApplication.instance().logger.warning
         if error.level == vstreamer_utils.ErrorLevel.ERROR:
-            return self.logger.error
+            return QtCore.QCoreApplication.instance().logger.error
         if error.level == vstreamer_utils.ErrorLevel.CRITICAL:
-            return self.logger.critical
+            return QtCore.QCoreApplication.instance().logger.critical
         raise ValueError("No suitable logger for error object found")

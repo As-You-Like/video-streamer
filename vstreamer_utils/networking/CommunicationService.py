@@ -21,7 +21,8 @@ class MessageHeader:
             raise ValueError("Message header length is invalid")
         if byte_array[:4] != MessageHeader.HEADER:
             raise ValueError("Message header is invalid")
-        return MessageHeader(struct.unpack("!Q", byte_array[4:])[0])
+        print(byte_array[4:])
+        return MessageHeader(int(struct.unpack("!Q", byte_array[4:])[0]))
 
 
 class CommunicationService(QtCore.QObject):
@@ -36,6 +37,7 @@ class CommunicationService(QtCore.QObject):
             raise ValueError("Socket is not connected")
 
         self.socket = socket
+        self.socket.setParent(self)
         self._data = bytearray()
         self._size_left = 0
         self._connect_signals()
@@ -66,7 +68,7 @@ class CommunicationService(QtCore.QObject):
         self.error_occurred.emit(vstreamer_utils.Error(self.socket.errorString(), vstreamer_utils.ErrorLevel.ERROR))
 
     def _read_data(self, size):
-        data = self.socket.read(size)
+        data = self.socket.read(size).data()
         if len(data) != size:
             raise RuntimeError("Could not read message data")
         return data
@@ -112,6 +114,7 @@ class CommunicationService(QtCore.QObject):
             if available != 0:
                 self._handle_data_ready()
 
-        except (RuntimeError, TypeError, ValueError) as exc:
+        except (KeyboardInterrupt) as exc:
+        #except (RuntimeError, TypeError, ValueError) as exc:
             self.socket.setErrorString(str(exc))
             self._handle_error()

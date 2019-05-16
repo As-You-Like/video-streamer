@@ -16,7 +16,7 @@ class RequestHandler(QtCore.QObject):
 
     def _emit_error(self, message):
         formatted_msg = "%s: %s" % (self.socket.ppeerAddress().toString(), message)
-        self.error_occurred.emit(vstreamer_utils.Error(formatted_msg), vstreamer_utils.ErrorLevel.WARNING)
+        self.error_occurred.emit(vstreamer_utils.Error(formatted_msg, vstreamer_utils.ErrorLevel.WARNING))
 
     def _handle_request(self, request):
         if not isinstance(request, networking.Request):

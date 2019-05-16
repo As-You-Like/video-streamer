@@ -26,14 +26,19 @@ class CommunicationServer(QtCore.QObject):
     def _handle_new_connection(self):
         socket = self.server.nextPendingConnection()
         communication_service = networking.CommunicationService(socket, self)
-        socket.setParent(communication_service)
         request_handler = communication.RequestHandler(communication_service, self.directory_tree, communication_service)
 
-        request_handler.error_occured.connect(self.error_occurred)
-        communication_service.error_occurred.connect(self.error_occurred)
+        request_handler.error_occurred.connect(self._handle_error)
+        communication_service.error_occurred.connect(self._handle_error)
         communication_service.disconnected.connect(self._handle_disconnected)
+
+    def _handle_error(self, error):
+        sender = self.sender()
+        if error.level in (vstreamer_utils.ErrorLevel.ERROR, vstreamer_utils.ErrorLevel.CRITICAL):
+            sender.deleteLater()
+        self.error_occurred.emit(error)
 
     def _handle_disconnected(self, socket):
         sender = self.sender()
-        # todo log
+        # todo log socket
         sender.deleteLater()

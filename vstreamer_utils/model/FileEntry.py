@@ -10,7 +10,7 @@ from vstreamer_utils import model
 
 
 class FileEntry(abc.ABC):
-    def __new__(cls, file, directory_root):
+    def __new__(cls, file=None, directory_root=None):
         # if called from subclass call default implementation
         if cls is not FileEntry:
             return super().__new__(cls)
@@ -49,7 +49,7 @@ class FileEntry(abc.ABC):
         ...
 
     def light_copy(self):
-        copied = copy.deepcopy(self)
+        copied = copy.copy(self)
         copied.description = None
         copied.image = None
         return copied
