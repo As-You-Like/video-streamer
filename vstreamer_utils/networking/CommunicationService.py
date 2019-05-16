@@ -63,7 +63,7 @@ class CommunicationService(QtCore.QObject):
         self.socket.disconnected.disconnect(self._handle_disconnected)
         self.socket.error.disconnect(self._handle_error)
         self.socket.readyRead.disconnect(self._handle_data_ready)
-        self.error_occurred.emit(self.socket.errorString())
+        self.error_occurred.emit(vstreamer_utils.Error(self.socket.errorString(), vstreamer_utils.ErrorLevel.ERROR))
 
     def _read_data(self, size):
         data = self.socket.read(size)
