@@ -1,6 +1,10 @@
-import vstreamer_utils
-from PySide2 import QtCore
+import urllib.parse
+
 import gi
+from PySide2 import QtCore
+
+import vstreamer_utils
+
 gi.require_version("GstRtspServer", "1.0")
 from gi.repository import GstRtspServer
 
@@ -19,6 +23,7 @@ class VideoServer(QtCore.QObject):
 
     def _add_media(self, file_path, directory_root):
         file = directory_root / file_path[1:]
+        print(file)
         if not vstreamer_utils.is_video_file(file):
             raise ValueError("'%s' is not a valid video file" % str(file))
 
@@ -29,7 +34,8 @@ class VideoServer(QtCore.QObject):
         factory = GstRtspServer.RTSPMediaFactory()
         factory.set_launch(pipeline)
         factory.set_shared(True)
-        self.server.get_mount_points().add_factory(file_path.replace(' ', '_'), factory)
+        encoded = urllib.parse.quote(file_path)
+        self.server.get_mount_points().add_factory(encoded, factory)
 
     def start(self, context=None):
         self.server.attach(context)

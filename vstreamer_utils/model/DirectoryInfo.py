@@ -1,7 +1,8 @@
+import copy
+import pathlib
+
 import vstreamer_utils
 from vstreamer_utils import model
-import pathlib
-import copy
 
 
 class DirectoryInfo:
@@ -18,6 +19,12 @@ class DirectoryInfo:
 
         self.entries = sorted([model.FileEntry(x, directory_root) for x in path.iterdir()
                                if x.is_dir() or vstreamer_utils.is_video_file(x)], key=key)
+
+    def __len__(self):
+        return len(self.entries)
+
+    def __getitem__(self, key):
+        return self.entries[key]
 
     def light_copy(self):
         light = copy.copy(self)
