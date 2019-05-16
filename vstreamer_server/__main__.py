@@ -6,6 +6,7 @@ from gi.repository import GLib, Gst
 
 
 def main():
+    from vstreamer_utils.networking.CommunicationService import MessageHeader
     Gst.init(None)
     Gst.debug_set_active(True)
     Gst.debug_set_default_threshold(3)
