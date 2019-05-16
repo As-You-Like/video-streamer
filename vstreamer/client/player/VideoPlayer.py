@@ -37,6 +37,15 @@ class VideoPlayer(QtWidgets.QWidget):
         self._timer.setInterval(100)
         self._timer.timeout.connect(self._update_ui)
         self._update_ui()
+        self.bar.video_state.connect(self.handle_video_state_update)
+
+    def handle_video_state_update(self):
+        if self._player.is_playing():
+            self._player.set_pause(1)
+            self.bar.set_playing(False)
+        else:
+            self._player.set_pause(0)
+            self.bar.set_playing(True)
 
     def set_remote_host(self, remote_host, port):
         self.remote_host = remote_host
@@ -55,7 +64,6 @@ class VideoPlayer(QtWidgets.QWidget):
     def _update_ui(self):
         curr_time = self._player.get_time()
         full_length = self._player.get_length()
-        print(str(curr_time) + " " + str(full_length))
         if curr_time == full_length:
             self._timer.stop()
             self.bar.set_playing(False)
