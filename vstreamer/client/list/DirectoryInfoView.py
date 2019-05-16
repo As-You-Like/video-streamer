@@ -132,4 +132,5 @@ class DirectoryInfoView(QtWidgets.QWidget):
         self.table_view.model().set_column_count(column_count)
         super().resizeEvent(event)
 
-
+    def set_properties(self, filename, additional_properties):
+        pass

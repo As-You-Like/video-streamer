@@ -1,4 +1,5 @@
 from PySide2.QtCore import QObject
+
 from vstreamer_utils.networking import DirectoryInfoRequest, AdditionalEntryPropertiesRequest
 
 
