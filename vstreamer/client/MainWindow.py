@@ -29,7 +29,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.response_handler = None
         self.communication_service = None
         self.request_sender = None
-
+        self.directory_info_view.play_requested.connect(self.video_player.play_video)
 
     def connect_to_server(self):
         login_dialog = LoginDialog()
@@ -59,14 +59,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.communication_service.received_response.connect(self._receive)
         self.request_sender.get_directory_info()
 
-        class Dummy:
-            def __init__(self):
-                self.path = None
-
-        dummy = Dummy()
-        dummy.path = "file.mp4"
-        self.video_player.play_video(dummy)
-
     def _receive(self, response):
         if isinstance(response, DirectoryInfoResponse):
             self.receive_directory_info(response)
@@ -76,10 +68,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.receive_error(response)
 
     def receive_directory_info(self, response: DirectoryInfoResponse):
-        self.directory_info_view.set_entries(FileEntryVM.from_file_entry(response.directory_info))
+        self.directory_info_view.set_entries(response.directory_info)
 
     def receive_additional_info(self, response: AdditionalEntryPropertiesResponse):
         self.directory_info_view.set_properties(response.additional_properties)
 
     def receive_error(self, response: ErrorResponse):
-        QMessageBox.critical(self, "Video Streamer", "Błąd komunikacji: " + response.error_string)
+        QMessageBox.critical(self, self.windowTitle(), "Błąd komunikacji: " + response.error_string)

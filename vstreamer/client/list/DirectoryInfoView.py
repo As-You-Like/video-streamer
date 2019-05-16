@@ -3,6 +3,7 @@ import math
 from PySide2 import QtWidgets, QtGui, QtCore
 
 import vstreamer_utils
+from vstreamer_utils import model
 from vstreamer.client import list
 from vstreamer.client.list import FileEntryVM
 
@@ -95,7 +96,7 @@ class ImageDelegate(QtWidgets.QStyledItemDelegate):
 
 
 class DirectoryInfoView(QtWidgets.QWidget):
-    path_requested = QtCore.Signal(str)  # TODO - selection
+    play_requested = QtCore.Signal(model.VideoFileEntry)
 
     def __init__(self, directory_info=None, parent=None):
         super().__init__(parent)
@@ -111,18 +112,21 @@ class DirectoryInfoView(QtWidgets.QWidget):
             QtWidgets.QHeaderView.ResizeToContents)
         self.table_view.verticalHeader().setDefaultSectionSize(
             list.FileEntryWidget.FIXED_SIZE.height())
-        self.properties_widget.set_properties(
-            FileEntryVM.FileEntryVM("testowy folder 1", False, dict(
-            prop1="test1",
-            prop2="test2"
-        )))
-        self.table_view.selectionModel().currentChanged.connect(self.handle_current_changed)
+        self.table_view.clicked.connect(self.handle_current_changed)
+        self.table_view.doubleClicked.connect(self.handle_double_click)
 
     def handle_current_changed(self, new_selection):
         if new_selection.isValid():
             self.properties_widget.set_properties(new_selection.data())
         else:
             self.properties_widget.clear()
+
+    def handle_double_click(self, selected):
+        if not selected.isValid():
+            return
+        file_entry = selected.data()
+        if file_entry.is_video():
+            self.play_requested.emit(file_entry)
 
     def set_entries(self, directory_info):
         self.table_view.model().set_entries(directory_info)

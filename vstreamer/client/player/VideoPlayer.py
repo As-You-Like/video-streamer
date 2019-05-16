@@ -1,6 +1,7 @@
 from PySide2 import QtCore, QtWidgets, QtMultimediaWidgets
 import platform
 import vlc
+import urllib.parse
 
 
 class VideoPlayer(QtWidgets.QWidget):
@@ -37,7 +38,8 @@ class VideoPlayer(QtWidgets.QWidget):
         self.port = port
 
     def play_video(self, video_file_entry):
-        url = "rtsp://%s:%d/%s" % (self.remote_host, self.port, video_file_entry.path.replace(' ', '_'))
+        encoded = urllib.parse.quote(video_file_entry.path)
+        url = "rtsp://%s:%d%s" % (self.remote_host, self.port, encoded)
         media = self._instance.media_new(url)
         media.parse()
         self._player.set_media(media)
