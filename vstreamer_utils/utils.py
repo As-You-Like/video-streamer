@@ -1,8 +1,9 @@
-import pathlib
-import pkg_resources
 import inspect
-from PySide2 import QtUiTools
+import pathlib
+import time
 
+import pkg_resources
+from PySide2 import QtUiTools
 
 # not imported
 from vstreamer.client.list import DirectoryInfoView, PropertiesWidget
@@ -61,3 +62,11 @@ def size_to_string(size, suffix="B"):
         return "%d Mi%s" % (size, suffix)
     size >>= 10
     return "%d Gi%s" % (size, suffix)
+
+
+def format_time(time_ms):
+    time_s = time_ms / 1000
+    if time_s >= 3600:
+        return time.strftime("%H:%M:%S", time.localtime(time_s))
+    else:
+        return time.strftime("%M:%S", time.localtime(time_s))
