@@ -5,8 +5,7 @@ import vstreamer_utils
 from vstreamer.client import login
 from vstreamer.client.list import FileEntryVM
 from vstreamer.client.login import LoginDialog
-from vstreamer.communication.RequestSender import RequestSender
-from vstreamer.communication.ResponseHandler import ResponseHandler
+from vstreamer.directories import DirectoryService
 from vstreamer_utils.networking import CommunicationService, DirectoryInfoResponse, \
     AdditionalEntryPropertiesResponse, ErrorResponse
 
@@ -28,7 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.communication_socket = None
         self.response_handler = None
         self.communication_service = None
-        self.request_sender = None
+        self.directory_service = None
         self.directory_info_view.play_requested.connect(self.video_player.play_video)
 
     def connect_to_server(self):
@@ -53,11 +52,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _initialize_communication_socket(self):
         self.communication_socket.setParent(self)
         self.communication_service = CommunicationService(self.communication_socket, self)
-        self.response_handler = ResponseHandler(self.communication_service, self)
-        self.request_sender = RequestSender(self.communication_service, self)
-
-        self.communication_service.received_response.connect(self._receive)
-        self.request_sender.get_directory_info()
+        self.directory_service = DirectoryService(self.communication_service, self)
+        self.directory_service.directories_ready.connect(self.directory_info_view.set_entries)
+        self.directory_service.get_directory_info()
 
     def _receive(self, response):
         if isinstance(response, DirectoryInfoResponse):
@@ -66,12 +63,3 @@ class MainWindow(QtWidgets.QMainWindow):
             self.receive_additional_info(response)
         elif isinstance(response, ErrorResponse):
             self.receive_error(response)
-
-    def receive_directory_info(self, response: DirectoryInfoResponse):
-        self.directory_info_view.set_entries(response.directory_info)
-
-    def receive_additional_info(self, response: AdditionalEntryPropertiesResponse):
-        self.directory_info_view.set_properties(response.additional_properties)
-
-    def receive_error(self, response: ErrorResponse):
-        QMessageBox.critical(self, self.windowTitle(), "Błąd komunikacji: " + response.error_string)

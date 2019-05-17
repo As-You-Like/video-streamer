@@ -14,25 +14,25 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-      <layout name="verticalLayout_2" class="QVBoxLayout">
-          <item>
-              <widget name="tabWidget" class="QTabWidget">
-                  <property name="currentIndex">
-                      <number>1</number>
-                  </property>
-                  <widget name="video_player" class="VideoPlayer">
-                      <attribute name="title">
-                          <string>Tab 1</string>
-                      </attribute>
-                  </widget>
-                  <widget name="directory_info_view" class="DirectoryInfoView">
-                      <attribute name="title">
-                          <string>Tab 2</string>
-                      </attribute>
-                  </widget>
-              </widget>
-          </item>
-      </layout>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="VideoPlayer" name="video_player">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+      </widget>
+      <widget class="DirectoryInfoView" name="directory_info_view">
+       <attribute name="title">
+        <string>Tab 2</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
