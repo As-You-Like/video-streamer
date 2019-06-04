@@ -34,8 +34,8 @@ class DirectoryTree:
         properties_file = self.directory_root / "AdditionalProperties.data"
         if not properties_file.exists():
             return
-        with properties_file.open("rb") as properties_file:
-            self.additional_properties = pickle.load(properties_file)
+        with properties_file.open("rb") as file_stream:
+            self.additional_properties = pickle.load(file_stream)
             additional_properties = self.additional_properties.copy()
             for file, properties in additional_properties.items():
                 directory = str(pathlib.Path(file).parent)

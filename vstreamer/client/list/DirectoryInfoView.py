@@ -105,6 +105,7 @@ class ImageDelegate(QtWidgets.QStyledItemDelegate):
 
 class DirectoryInfoView(QtWidgets.QWidget):
     play_requested = QtCore.Signal(model.VideoFileEntry)
+    directory_requested = QtCore.Signal(model.DirectoryEntry)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -141,25 +142,16 @@ class DirectoryInfoView(QtWidgets.QWidget):
         if file_entry.is_video():
             self.play_requested.emit(file_entry)
         else:
-            self.directory_service.get_directory_info(file_entry.path)
+            self.directory_requested.emit(file_entry)
 
     def resizeEvent(self, event):
         column_count = self.table_view.size().width() // list.FileEntryWidget.FIXED_SIZE.width()
         self.table_view.model().set_column_count(column_count)
         super().resizeEvent(event)
 
-    def initialize_directory_service(self, communication_service):
-        self.directory_service = DirectoryService(communication_service, self)
-        self.directory_service.directories_ready.connect(self._set_entries)
-        self.directory_service.additional_properties_ready.connect(self._set_properties)
-        self.directory_service.get_directory_info()
-
-    def _set_entries(self, directory_info):
+    def set_entries(self, directory_info):
         self.table_view.model().set_entries(directory_info)
         self.properties_widget.clear()
-        for file in directory_info.entries:
-            if file.filename != "..":
-                self.directory_service.get_additional_info(file.path)
 
-    def _set_properties(self, filename, additional_properties):
+    def set_additional_properties(self, filename, additional_properties):
         self.table_view.model().set_additional_info(filename, additional_properties)
