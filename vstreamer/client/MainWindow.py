@@ -1,11 +1,9 @@
 from PySide2 import QtWidgets
-from PySide2.QtWidgets import QMessageBox
 
 import vstreamer_utils
 from vstreamer.client import login
 from vstreamer.client.list import FileEntryVM
 from vstreamer.client.login import LoginDialog
-from vstreamer.directories import DirectoryService
 from vstreamer_utils.networking import CommunicationService, DirectoryInfoResponse, \
     AdditionalEntryPropertiesResponse, ErrorResponse
 
@@ -52,10 +50,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _initialize_communication_socket(self):
         self.communication_socket.setParent(self)
         self.communication_service = CommunicationService(self.communication_socket, self)
-        self.directory_service = DirectoryService(self.communication_service, self)
-        self.directory_service.directories_ready.connect(self.directory_info_view.set_entries)
-        self.directory_service.get_directory_info()
-
+        self.directory_info_view.initialize_directory_service(self.communication_service)
     def _receive(self, response):
         if isinstance(response, DirectoryInfoResponse):
             self.receive_directory_info(response)

@@ -4,14 +4,15 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 import vstreamer_utils
 from vstreamer.client import list
+from vstreamer.directories import DirectoryService
 from vstreamer_utils import model
 
 
 class DirectoryInfoItemModel(QtCore.QAbstractTableModel):
-    def __init__(self, file_entries, parent):
+    def __init__(self, parent):
         super().__init__(parent)
         self._column_count = 0
-        self._file_entries = file_entries
+        self._file_entries = []
 
     def set_column_count(self, column_count):
         if column_count != self._column_count:
@@ -23,6 +24,15 @@ class DirectoryInfoItemModel(QtCore.QAbstractTableModel):
         self.beginResetModel()
         self._file_entries = file_entries
         self.endResetModel()
+
+    def set_additional_info(self, path, additional_info):
+        for i in range(len(self._file_entries)):
+            entry = self._file_entries[i]
+            if entry.path == path:
+                entry.set_additional_properties(additional_info)
+                self.dataChanged.emit(
+                    self.index(math.floor(i / self._column_count), i % self._column_count)
+                )
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         if self._file_entries is None or self._column_count == 0:
@@ -97,10 +107,10 @@ class ImageDelegate(QtWidgets.QStyledItemDelegate):
 class DirectoryInfoView(QtWidgets.QWidget):
     play_requested = QtCore.Signal(model.VideoFileEntry)
 
-    def __init__(self, directory_info=None, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         vstreamer_utils.load_ui("DirectoryInfoView.ui", self)
-        self.table_view.setModel(DirectoryInfoItemModel(directory_info, self))
+        self.table_view.setModel(DirectoryInfoItemModel(self))
         self.table_view.setItemDelegate(ImageDelegate(self.table_view))
         self.table_view.resizeColumnsToContents()
         self.table_view.horizontalHeader().setSectionResizeMode(
@@ -113,6 +123,7 @@ class DirectoryInfoView(QtWidgets.QWidget):
             list.FileEntryWidget.FIXED_SIZE.height())
         self.table_view.clicked.connect(self.handle_current_changed)
         self.table_view.doubleClicked.connect(self.handle_double_click)
+        self.directory_service = None
 
     def handle_current_changed(self, new_selection):
         if new_selection.isValid():
@@ -126,14 +137,24 @@ class DirectoryInfoView(QtWidgets.QWidget):
         file_entry = selected.data()
         if file_entry.is_video():
             self.play_requested.emit(file_entry)
-
-    def set_entries(self, directory_info):
-        self.table_view.model().set_entries(directory_info)
+        else:
+            self.directory_service.get_directory_info(file_entry.path)
 
     def resizeEvent(self, event):
         column_count = self.table_view.size().width() // list.FileEntryWidget.FIXED_SIZE.width()
         self.table_view.model().set_column_count(column_count)
         super().resizeEvent(event)
 
-    def set_properties(self, filename, additional_properties):
-        pass
+    def initialize_directory_service(self, communication_service):
+        self.directory_service = DirectoryService(communication_service, self)
+        self.directory_service.directories_ready.connect(self._set_entries)
+        self.directory_service.additional_properties_ready.connect(self._set_properties)
+        self.directory_service.get_directory_info()
+
+    def _set_entries(self, directory_info):
+        self.table_view.model().set_entries(directory_info)
+        for file in directory_info:
+            self.directory_service.get_additional_info(file.path)
+
+    def _set_properties(self, filename, additional_properties):
+        self.table_view.model().set_additional_info(filename, additional_properties)

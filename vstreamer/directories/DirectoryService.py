@@ -3,14 +3,14 @@ from PySide2.QtCore import QObject
 
 import vstreamer_utils
 from vstreamer.directories import DirectoryCache
-from vstreamer_utils.networking import DirectoryInfoRequest, AdditionalEntryPropertiesRequest,\
-    DirectoryInfoResponse, AdditionalEntryPropertiesResponse, ErrorResponse
 from vstreamer_utils.model import DirectoryInfo, AdditionalEntryProperties
+from vstreamer_utils.networking import DirectoryInfoRequest, AdditionalEntryPropertiesRequest, \
+    DirectoryInfoResponse, AdditionalEntryPropertiesResponse, ErrorResponse
 
 
 class DirectoryService(QObject):
     directories_ready = QtCore.Signal(DirectoryInfo)
-    additional_properties_ready = QtCore.Signal(AdditionalEntryProperties)
+    additional_properties_ready = QtCore.Signal(str, AdditionalEntryProperties)
     error_occurred = QtCore.Signal(vstreamer_utils.Error)
 
     def __init__(self, communication_service, parent=None):
@@ -29,7 +29,7 @@ class DirectoryService(QObject):
     def get_additional_info(self, filepath):
         cached_properties = self._cache.get_additional_properties(filepath)
         if cached_properties is not None:
-            self.additional_properties_ready.emit(cached_properties)
+            self.additional_properties_ready.emit(filepath, cached_properties)
         else:
             self.communication_service.write_message(AdditionalEntryPropertiesRequest(filepath))
 

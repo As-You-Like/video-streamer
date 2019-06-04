@@ -1,11 +1,13 @@
-import vstreamer_utils
-import collections
-import pathlib
 import abc
+import collections
 import copy
-import time
 import datetime
+import pathlib
+import time
+
 import pymediainfo
+
+import vstreamer_utils
 from vstreamer_utils import model
 
 

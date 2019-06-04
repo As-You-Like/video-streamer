@@ -19,6 +19,10 @@ class DirectoryInfo:
 
         self.entries = sorted([model.FileEntry(x, directory_root) for x in path.iterdir()
                                if x.is_dir() or vstreamer_utils.is_video_file(x)], key=key)
+        if path != directory_root:
+            backdir = model.FileEntry(path.parent, directory_root)
+            backdir.filename = ".."
+            self.entries.insert(0, backdir)
 
     def __len__(self):
         return len(self.entries)
