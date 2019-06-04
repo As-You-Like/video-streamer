@@ -38,6 +38,10 @@ class VideoPlayer(QtWidgets.QWidget):
         self._timer.timeout.connect(self._update_ui)
         self._update_ui()
         self.bar.video_state.connect(self.handle_video_state_update)
+        self.bar.video_set_point_in_time.connect(self.handle_slider_change)
+
+    def handle_slider_change(self, value):
+        self._player.set_time(value)
 
     def handle_video_state_update(self):
         if self._player.is_playing():
@@ -46,6 +50,7 @@ class VideoPlayer(QtWidgets.QWidget):
         else:
             self._player.set_pause(0)
             self.bar.set_playing(True)
+            self._timer.stop()
 
     def set_remote_host(self, remote_host, port):
         self.remote_host = remote_host

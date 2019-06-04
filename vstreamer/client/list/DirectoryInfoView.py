@@ -29,10 +29,9 @@ class DirectoryInfoItemModel(QtCore.QAbstractTableModel):
         for i in range(len(self._file_entries)):
             entry = self._file_entries[i]
             if entry.path == path:
-                entry.set_additional_properties(additional_info)
-                self.dataChanged.emit(
-                    self.index(math.floor(i / self._column_count), i % self._column_count)
-                )
+                entry.apply_additional_properties(additional_info)
+                index = self.index(math.floor(i / self._column_count), i % self._column_count)
+                self.dataChanged.emit(index, index)
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         if self._file_entries is None or self._column_count == 0:
