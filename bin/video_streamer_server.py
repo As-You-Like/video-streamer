@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 from vstreamer_server.__main__ import main
 
