@@ -21,7 +21,6 @@ class MessageHeader:
             raise ValueError("Message header length is invalid")
         if byte_array[:4] != MessageHeader.HEADER:
             raise ValueError("Message header is invalid")
-        print(byte_array[4:])
         return MessageHeader(int(struct.unpack("!Q", byte_array[4:])[0]))
 
 
@@ -41,6 +40,7 @@ class CommunicationService(QtCore.QObject):
         self._data = bytearray()
         self._size_left = 0
         self._connect_signals()
+        vstreamer_utils.log_info("Host %s - created CommunicationService" % self.socket.peerAddress().toString())
 
     def write_message(self, message):
         if not isinstance(message, networking.Request) and not isinstance(message, networking.Response):
@@ -114,7 +114,6 @@ class CommunicationService(QtCore.QObject):
             if available != 0:
                 self._handle_data_ready()
 
-        except (KeyboardInterrupt) as exc:
-        #except (RuntimeError, TypeError, ValueError) as exc:
+        except (RuntimeError, TypeError, ValueError) as exc:
             self.socket.setErrorString(str(exc))
             self._handle_error()

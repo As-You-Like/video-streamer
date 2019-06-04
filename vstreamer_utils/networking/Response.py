@@ -4,7 +4,7 @@ class Response:
     pass
 
 
-class ErrorResponse:
+class ErrorResponse(Response):
     def __init__(self, error_string):
         super().__init__()
         self.error_string = error_string

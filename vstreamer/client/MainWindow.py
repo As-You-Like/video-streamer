@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 import vstreamer_utils
 from vstreamer.client import login
@@ -14,6 +14,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         vstreamer_utils.load_ui("MainWindow.ui", self)
+        QtCore.QCoreApplication.instance().aboutToQuit.connect(self._on_application_quit)
 
         if DEBUG:
             self.directory_info_view.set_entries(FileEntryVM.mock_data())
@@ -51,10 +52,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.communication_socket.setParent(self)
         self.communication_service = CommunicationService(self.communication_socket, self)
         self.directory_info_view.initialize_directory_service(self.communication_service)
-    def _receive(self, response):
-        if isinstance(response, DirectoryInfoResponse):
-            self.receive_directory_info(response)
-        elif isinstance(response, AdditionalEntryPropertiesResponse):
-            self.receive_additional_info(response)
-        elif isinstance(response, ErrorResponse):
-            self.receive_error(response)
+
+    def _on_application_quit(self):
+        self.communication_service.socket.disconnectFromHost()
+

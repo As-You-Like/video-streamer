@@ -1,4 +1,5 @@
 from PySide2 import QtCore, QtWidgets, QtGui
+import vstreamer_utils
 from vstreamer_utils import libraries
 import pkg_resources
 
@@ -20,3 +21,8 @@ class VideoStreamerApplication(QtWidgets.QApplication):
         # application properties
         self.setApplicationName("video_streamer")
         self.setWindowIcon(QtGui.QIcon(":/icons/Avatar.png"))
+
+        self.logger = vstreamer_utils.make_logger()
+        vstreamer_utils.set_signal_handlers(self)
+
+        self.logger.info("Started client application")

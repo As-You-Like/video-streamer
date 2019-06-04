@@ -15,16 +15,20 @@ class CommunicationServer(QtCore.QObject):
 
         self.server.newConnection.connect(self._handle_new_connection)
         self.server.acceptError.connect(self._handle_accept_error)
+        vstreamer_utils.log_info("Initialized communication server")
 
     def start(self):
         if not self.server.listen(port=self.port):
             raise RuntimeError("Could not start listening for connections on port: %d" % self.port)
+        vstreamer_utils.log_info("Started listening for tcp connections on port %d" % self.port)
 
     def _handle_accept_error(self):
         self.error_occurred.emit(vstreamer_utils.Error(self.server.errorString(), vstreamer_utils.ErrorLevel.ERROR))
 
     def _handle_new_connection(self):
         socket = self.server.nextPendingConnection()
+        vstreamer_utils.log_info("Host %s connected" % socket.peerAddress().toString())
+
         communication_service = networking.CommunicationService(socket, self)
         request_handler = communication.RequestHandler(communication_service, self.directory_tree, communication_service)
 
@@ -40,5 +44,5 @@ class CommunicationServer(QtCore.QObject):
 
     def _handle_disconnected(self, socket):
         sender = self.sender()
-        # todo log socket
+        vstreamer_utils.log_info("Host %s disconnected" % socket.peerAddress().toString())
         sender.deleteLater()

@@ -126,7 +126,11 @@ class DirectoryInfoView(QtWidgets.QWidget):
 
     def handle_current_changed(self, new_selection):
         if new_selection.isValid():
-            self.properties_widget.set_properties(new_selection.data())
+            file_entry = new_selection.data()
+            if file_entry.filename != "..":
+                self.properties_widget.set_properties(file_entry)
+            else:
+                self.properties_widget.clear()
         else:
             self.properties_widget.clear()
 
@@ -152,8 +156,10 @@ class DirectoryInfoView(QtWidgets.QWidget):
 
     def _set_entries(self, directory_info):
         self.table_view.model().set_entries(directory_info)
-        for file in directory_info:
-            self.directory_service.get_additional_info(file.path)
+        self.properties_widget.clear()
+        for file in directory_info.entries:
+            if file.filename != "..":
+                self.directory_service.get_additional_info(file.path)
 
     def _set_properties(self, filename, additional_properties):
         self.table_view.model().set_additional_info(filename, additional_properties)

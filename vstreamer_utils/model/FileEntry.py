@@ -62,6 +62,8 @@ class FileEntry(abc.ABC):
     def apply_additional_properties(self, additional_properties):
         if additional_properties.title is None:
             self.properties["Filename"] = self.filename
+        else:
+            self.properties["Filename"] = additional_properties.title
         self.description = additional_properties.description
         self.image = additional_properties.image
 
@@ -83,6 +85,7 @@ class DirectoryEntry(FileEntry):
         self.other_properties["File Count"] = str(subdirectories + video_files)
         self.other_properties["Subdirectories"] = str(subdirectories)
         self.other_properties["Video Files"] = str(video_files)
+        vstreamer_utils.log_info("Created DirectoryEntry for '%s'" % self.path)
 
     def is_video(self):
         return False
@@ -125,6 +128,7 @@ class VideoFileEntry(FileEntry):
             elif track.track_type == "Audio":
                 if track.format_info is not None:
                     self.other_properties["Audio Format"] = track.format_info
+        vstreamer_utils.log_info("Created VideoFileEntry for '%s'" % self.path)
 
     def is_video(self):
         return True

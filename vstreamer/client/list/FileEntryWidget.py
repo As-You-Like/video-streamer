@@ -15,11 +15,14 @@ class FileEntryWidget(QtWidgets.QWidget):
     def set_file_entry(self, file_entry):
         self._file_entry = file_entry
         if self._file_entry is not None:
-            if self._file_entry.is_video:
+            if self._file_entry.image is not None:
+                image = QtGui.QImage.fromData(QtCore.QByteArray(self._file_entry.image))
+                self.image_label.setPixmap(QtGui.QPixmap.fromImage(image))
+            elif self._file_entry.is_video():
                 self.image_label.setPixmap(QtGui.QPixmap(":/icons/VideoFileIcon.png"))
             else:
                 self.image_label.setPixmap(QtGui.QPixmap(":/icons/DirectoryIcon.png"))
-            self.title_label.setText(self._file_entry.filename)
+            self.title_label.setText(self._file_entry.properties["Filename"])
 
     def get_file_entry(self):
         return self._file_entry

@@ -16,7 +16,7 @@ def get_config_directory(subdir_name):
 
 class ConfigException(Exception):
     def __init__(self, message, filename=None):
-        super().__init__(message)
+        super().__init__(message + "'%s'" % filename)
         self.filename = filename
 
 
@@ -40,6 +40,7 @@ class Configuration:
 
         self._create_missing()
         self.read_config()
+        vstreamer_utils.log_info("Read configuration from '%s'" % str(self.path.file))
 
     def read_config(self):
         settings = QtCore.QSettings(str(self.path.file), QtCore.QSettings.IniFormat)
