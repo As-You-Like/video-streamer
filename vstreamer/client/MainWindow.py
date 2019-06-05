@@ -60,5 +60,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.directory_info_view.set_additional_properties(filename, additional_properties)
 
     def _on_application_quit(self):
-        self.communication_service.socket.disconnectFromHost()
+        if self.communication_service is not None:
+            self.communication_service.socket.disconnectFromHost()
         vstreamer_utils.log_info("Client is closing")

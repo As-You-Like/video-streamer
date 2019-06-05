@@ -1,6 +1,5 @@
 from PySide2 import QtCore, QtWidgets, QtGui
 import vstreamer_utils
-from vstreamer_utils import libraries
 import pkg_resources
 
 
@@ -10,9 +9,6 @@ class VideoStreamerApplication(QtWidgets.QApplication):
         QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 
         super().__init__(args)
-
-        # use libraries within package (vlc and mediainfo)
-        libraries.init_libraries()
 
         # resources
         rcc_path = str(pkg_resources.resource_filename("vstreamer", "resources/resources.rcc"))
