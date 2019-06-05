@@ -20,10 +20,10 @@ class VideoServer(QtCore.QObject):
             for file_entry in directory_info.entries:
                 if file_entry.is_video():
                     self._add_media(file_entry.path, directory_tree.directory_root)
+        vstreamer_utils.log_info("Initialized video server")
 
     def _add_media(self, file_path, directory_root):
         file = directory_root / file_path[1:]
-        print(file)
         if not vstreamer_utils.is_video_file(file):
             raise ValueError("'%s' is not a valid video file" % str(file))
 
@@ -36,9 +36,11 @@ class VideoServer(QtCore.QObject):
         factory.set_shared(True)
         encoded = urllib.parse.quote(file_path)
         self.server.get_mount_points().add_factory(encoded, factory)
+        vstreamer_utils.log_info("Added '%s' to video server mount points" % str(file_path))
 
     def start(self, context=None):
         self.server.attach(context)
+        vstreamer_utils.log_info("Started listening for rtsp connections on port %d" % self.port)
 
     @staticmethod
     def _corresponding_demuxer(file):

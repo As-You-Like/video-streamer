@@ -1,6 +1,7 @@
-from PySide2 import QtCore, QtWidgets, QtGui
-from vstreamer_utils import libraries
 import pkg_resources
+from PySide2 import QtCore, QtWidgets, QtGui
+
+import vstreamer_utils
 
 
 class VideoStreamerApplication(QtWidgets.QApplication):
@@ -10,9 +11,6 @@ class VideoStreamerApplication(QtWidgets.QApplication):
 
         super().__init__(args)
 
-        # use libraries within package (vlc and mediainfo)
-        libraries.init_libraries()
-
         # resources
         rcc_path = str(pkg_resources.resource_filename("vstreamer", "resources/resources.rcc"))
         QtCore.QResource.registerResource(rcc_path)
@@ -20,3 +18,8 @@ class VideoStreamerApplication(QtWidgets.QApplication):
         # application properties
         self.setApplicationName("video_streamer")
         self.setWindowIcon(QtGui.QIcon(":/icons/Avatar.png"))
+
+        self.logger = vstreamer_utils.make_logger()
+        vstreamer_utils.set_signal_handlers(self)
+
+        self.logger.info("Started client application")

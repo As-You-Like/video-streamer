@@ -2,33 +2,21 @@ import sys
 
 from PySide2 import QtCore
 
+import vstreamer_utils
 from vstreamer import application, client
 
 
 def main():
     app = application.VideoStreamerApplication(sys.argv)
+    error_handler = vstreamer_utils.ErrorHandler(vstreamer_utils.ErrorHandlerType.GUI_HANDLER, app)
 
-    # dir_view = client.list.DirectoryInfoView()
-    # if DEBUG:
-    #     dir_view.set_entries(list.FileEntryVM.mock_data())
-    # else:
-    #     dir_view.set_entries(list.FileEntryVM.from_file_entry(DirectoryInfo("/home/tom/Videos", "/home/tom")))
-    # dir_view.show()
-    #
-    # video_player = player.VideoPlayer()
-    # video_player.set_remote_host("localhost", 5656)
-    # class Dummy:
-    #     def __init__(self):
-    #         self.path = None
-    # dummy = Dummy()
-    # dummy.path = "/film.mp4"
-    # video_player.play_video(dummy)
-    # video_player.show()
+    try:
+        main_window = client.MainWindow()
+    except Exception as exc:
+        error_handler.handle_exception(exc)
+        return 1
 
-    main_window = client.MainWindow()
     QtCore.QTimer.singleShot(0, main_window.connect_to_server)
-    # main_window.show()
-
     app.exec_()
 
 

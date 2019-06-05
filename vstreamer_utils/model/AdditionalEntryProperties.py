@@ -1,11 +1,8 @@
-from vstreamer_utils import model
-
-
 class AdditionalEntryProperties:
     def __init__(self, tile=None, description=None, image=None):
         self.title = tile
         self.description = description
-        self.image = image
+        self.image = image  # raw binary data
 
     @staticmethod
     def from_file_entry(file_entry):

@@ -1,9 +1,11 @@
 import inspect
+import logging
 import pathlib
+import signal
 import time
 
 import pkg_resources
-from PySide2 import QtUiTools
+from PySide2 import QtCore, QtUiTools
 
 # not imported
 from vstreamer.client.list import DirectoryInfoView, PropertiesWidget
@@ -38,7 +40,7 @@ class _SelfUILoader(QtUiTools.QUiLoader):
 
 SERVER_PORT = 5655
 SERVER_VIDEO_PORT = 5656
-
+DBUS_NAME = "com.video_streamer.ServerController"
 
 def is_video_file(file):
     file = pathlib.Path(file)
@@ -71,3 +73,29 @@ def format_time(time_ms):
         return time.strftime("%H:%M:%S", time.localtime(time_s))
     else:
         return time.strftime("%M:%S", time.localtime(time_s))
+
+
+def make_logger():
+    logging.basicConfig(datefmt="%Y.%m.%d %H:%M:%S",
+                        format="[%(asctime)s] %(name)s[%(levelname)s]: %(message)s")
+    app_name = QtCore.QCoreApplication.applicationName()
+    logger = logging.getLogger(app_name)
+    logger.setLevel(logging.INFO)
+    logger = logging.getLogger(QtCore.QCoreApplication.applicationName())
+    return logger
+
+
+def set_signal_handlers(app):
+    def handle(signum, frame):
+        QtCore.QCoreApplication.quit()
+
+    signal_timer = QtCore.QTimer(app)
+    signal_timer.start(50)
+    signal_timer.timeout.connect(lambda: None)
+
+    signal.signal(signal.SIGINT, handle)
+    signal.signal(signal.SIGTERM, handle)
+
+
+def log_info(message):
+    QtCore.QCoreApplication.instance().logger.info(message)

@@ -1,6 +1,8 @@
 import os
 import pathlib
+
 from PySide2 import QtCore
+
 import vstreamer_utils
 
 
@@ -16,7 +18,7 @@ def get_config_directory(subdir_name):
 
 class ConfigException(Exception):
     def __init__(self, message, filename=None):
-        super().__init__(message)
+        super().__init__(message + "'%s'" % filename)
         self.filename = filename
 
 
@@ -47,6 +49,7 @@ class Configuration:
         self.config.starting_port = int(settings.value(Configuration.Config.STARTING_PORT, str(self.config.starting_port)))
         if settings.status() != QtCore.QSettings.NoError:
             raise ConfigException("Could not read configuration file", str(self.path.file))
+        vstreamer_utils.log_info("Read configuration from '%s'" % str(self.path.file))
 
     def write_config(self):
         settings = QtCore.QSettings(str(self.path.file), QtCore.QSettings.IniFormat)
@@ -55,6 +58,7 @@ class Configuration:
         settings.sync()
         if settings.status() != QtCore.QSettings.NoError:
             raise ConfigException("Could not write configuration file", str(self.path.file))
+        vstreamer_utils.log_info("Saved configuration to '%s'" % str(self.path.file))
 
     def _create_missing(self):
         if not self.path.directory.exists():
