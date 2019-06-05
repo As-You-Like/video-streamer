@@ -86,7 +86,7 @@ class VideoPlayer(QtWidgets.QWidget):
             self._is_playing = True
 
     def handle_volume_change(self, volume):
-        self._player.set_volume(volume)
+        self._player.audio_set_volume(volume)
 
     def set_remote_host(self, remote_host, port):
         self.remote_host = remote_host

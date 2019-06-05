@@ -20,16 +20,18 @@ class VideoPlayerBar(QtWidgets.QWidget):
         self.forward_toolbutton.clicked.connect(self._handle_forward)
         self.volume_toolbutton.clicked.connect(self._handle_volume_click)
         self._old_volume = -1
+        self.volume_slider.sliderMoved.connect(self.video_set_volume)
 
     def _handle_volume_click(self):
         if self.volume_slider.value() == 0:
             if self._old_volume != -1:
-                self.set_volume(self._old_volume)
+                self.video_set_volume.emit(self._old_volume)
                 self._old_volume = -1
+                return
             else:
                 return
         self._old_volume = self.volume_slider.value()
-        self.set_volume(0)
+        self.video_set_volume.emit(0)
     def _handle_rewind(self):
         cur_val = self.slider.value()
         max_val = self.slider.maximum()
