@@ -40,7 +40,8 @@ class CommunicationService(QtCore.QObject):
         self._data = bytearray()
         self._size_left = 0
         self._connect_signals()
-        vstreamer_utils.log_info("Host %s - created CommunicationService" % self.socket.peerAddress().toString())
+        vstreamer_utils.log_info("Host %s:%d - created CommunicationService" %
+                                 (self.socket.peerAddress().toString(), self.socket.peerPort()))
 
     def write_message(self, message):
         if not isinstance(message, networking.Request) and not isinstance(message, networking.Response):

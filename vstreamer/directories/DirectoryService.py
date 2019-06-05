@@ -18,8 +18,12 @@ class DirectoryService(QObject):
         self.communication_service = communication_service
         self.communication_service.received_response.connect(self._handle_response)
         self._cache = DirectoryCache()
+        vstreamer_utils.log_info("Host %s:%d - created DirectoryService" %
+                                 (self.communication_service.socket.peerAddress().toString(),
+                                  self.communication_service.socket.peerPort()))
 
     def get_directory_info(self, path="/"):
+        vstreamer_utils.log_info("Querying DirectoryInfo for '%s'" % path)
         cached_directory = self._cache.get_directory(path)
         if cached_directory is not None:
             self.directories_ready.emit(cached_directory)
@@ -27,6 +31,7 @@ class DirectoryService(QObject):
             self.communication_service.write_message(DirectoryInfoRequest(path))
 
     def get_additional_info(self, filepath):
+        vstreamer_utils.log_info("Querying AdditionalEntryProperties for '%s'" % filepath)
         cached_properties = self._cache.get_additional_properties(filepath)
         if cached_properties is not None:
             self.additional_properties_ready.emit(filepath, cached_properties)
@@ -34,6 +39,7 @@ class DirectoryService(QObject):
             self.communication_service.write_message(AdditionalEntryPropertiesRequest(filepath))
 
     def _handle_response(self, response):
+        # TODO logs
         if isinstance(response, DirectoryInfoResponse):
             self._cache.store_directory(response.directory_info)
             self.directories_ready.emit(response.directory_info)

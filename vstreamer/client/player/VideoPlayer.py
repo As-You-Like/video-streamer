@@ -18,7 +18,7 @@ vsnprintf.argtypes = (
     ctypes.c_char_p,
     ctypes.c_size_t,
     ctypes.c_char_p,
-    ctypes.c_void_p,)
+    ctypes.c_void_p)
 
 
 class VideoPlayer(QtWidgets.QWidget):
@@ -77,6 +77,7 @@ class VideoPlayer(QtWidgets.QWidget):
     def set_remote_host(self, remote_host, port):
         self.remote_host = remote_host
         self.port = port
+        vstreamer_utils.log_info("Initialized VideoPlayer with %s:%d" % (remote_host, port))
 
     def play_video(self, video_file_entry):
         encoded = urllib.parse.quote(video_file_entry.path)
@@ -87,6 +88,7 @@ class VideoPlayer(QtWidgets.QWidget):
         self._player.play()
         self.bar.set_playing(True)
         self._timer.start()
+        vstreamer_utils.log_info("Playing video from '%s'" % url)
 
     def _update_ui(self):
         curr_time = self._player.get_time()

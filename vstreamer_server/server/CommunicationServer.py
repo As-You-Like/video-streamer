@@ -27,7 +27,7 @@ class CommunicationServer(QtCore.QObject):
 
     def _handle_new_connection(self):
         socket = self.server.nextPendingConnection()
-        vstreamer_utils.log_info("Host %s connected" % socket.peerAddress().toString())
+        vstreamer_utils.log_info("Host %s:%d connected" % (socket.peerAddress().toString(), socket.peerPort()))
 
         communication_service = networking.CommunicationService(socket, self)
         request_handler = communication.RequestHandler(communication_service, self.directory_tree, communication_service)
@@ -44,5 +44,5 @@ class CommunicationServer(QtCore.QObject):
 
     def _handle_disconnected(self, socket):
         sender = self.sender()
-        vstreamer_utils.log_info("Host %s disconnected" % socket.peerAddress().toString())
+        vstreamer_utils.log_info("Host %s:%d disconnected" % (socket.peerAddress().toString(), socket.peerPort()))
         sender.deleteLater()

@@ -11,25 +11,29 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__(parent)
         vstreamer_utils.load_ui("MainWindow.ui", self)
         QtCore.QCoreApplication.instance().aboutToQuit.connect(self._on_application_quit)
-        self.server = None
-        self.communication_socket = None
+        self.error_handler = vstreamer_utils.ErrorHandler(vstreamer_utils.ErrorHandlerType.GUI_HANDLER,
+                                                          self)
+        self.remote_host = None
+        self.socket = None
         self.response_handler = None
         self.communication_service = None
         self.directory_service = None
+        vstreamer_utils.log_info("Initialized MainWindow")
 
     def connect_to_server(self):
         login_dialog = LoginDialog()
         if login_dialog.exec_() == QtWidgets.QDialog.DialogCode.Accepted:
-            self.server = login_dialog.server
-            self.video_player.set_remote_host(self.server, 5656)
+            self.remote_host = login_dialog.remote_host
+            self.video_player.set_remote_host(self.remote_host, 5656)
+            vstreamer_utils.log_info("Got remote host from input - '%s'" % self.remote_host)
         else:
             QtWidgets.QApplication.quit()
             return
 
-        connect_dialog = login.ConnectDialog(self.server)
+        connect_dialog = login.ConnectDialog(self.remote_host)
         connect_dialog.connect_to_server()
         if connect_dialog.exec_() == QtWidgets.QDialog.DialogCode.Accepted:
-            self.communication_socket = connect_dialog.socket
+            self.socket = connect_dialog.socket
             self._initialize_communication_socket()
         else:
             QtWidgets.QApplication.quit()
@@ -37,18 +41,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
 
     def _initialize_communication_socket(self):
-        self.communication_socket.setParent(self)
-        self.communication_service = CommunicationService(self.communication_socket, self)
+        try:
+            self.socket.setParent(self)
+            vstreamer_utils.log_info("Host %s:%d - connected"
+                                     % (self.socket.peerAddress().toString(), self.socket.peerPort()))
+            self.communication_service = CommunicationService(self.socket, self)
+            self.communication_service.error_occurred.connect(self.error_handler.handle_error)
 
-        self.directory_service = directories.DirectoryService(self.communication_service, self)
-        self.directory_service.directories_ready.connect(self._handle_directories_ready)
-        self.directory_service.additional_properties_ready.connect(self._handle_additional_properties_ready)
+            self.directory_service = directories.DirectoryService(self.communication_service, self)
+            self.directory_service.directories_ready.connect(self._handle_directories_ready)
+            self.directory_service.additional_properties_ready.connect(self._handle_additional_properties_ready)
+            self.directory_service.error_occurred.connect(self.error_handler.handle_error)
 
-        self.directory_info_view.play_requested.connect(self.video_player.play_video)
-        self.directory_info_view.directory_requested.connect(
-            lambda entry: self.directory_service.get_directory_info(entry.path))
+            self.directory_info_view.play_requested.connect(self.video_player.play_video)
+            self.directory_info_view.directory_requested.connect(
+                lambda entry: self.directory_service.get_directory_info(entry.path))
 
-        self.directory_service.get_directory_info()
+            self.video_player.error_occurred.connect(self.error_handler.handle_error)
+
+            self.directory_service.get_directory_info()
+        except Exception as exc:
+            self.error_handler.handle_exception(exc)
 
     def _handle_directories_ready(self, directory_info):
         self.directory_info_view.set_entries(directory_info)
@@ -61,5 +74,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_application_quit(self):
         if self.communication_service is not None:
+            host = self.socket.peerAddress().toString()
+            port = self.socket.peerPort()
             self.communication_service.socket.disconnectFromHost()
+            vstreamer_utils.log_info("Host %s:%d - disconnected" % (host, port))
         vstreamer_utils.log_info("Client is closing")
