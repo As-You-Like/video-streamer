@@ -62,4 +62,3 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_application_quit(self):
         self.communication_service.socket.disconnectFromHost()
         vstreamer_utils.log_info("Client is closing")
-
