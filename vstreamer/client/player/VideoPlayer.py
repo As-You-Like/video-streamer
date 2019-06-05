@@ -32,6 +32,7 @@ class VideoPlayer(QtWidgets.QWidget):
         else:
             raise RuntimeError("Multimedia is not supported on this platform")
 
+        self._is_playing = False
         self._timer = QtCore.QTimer(self)
         self._timer.setSingleShot(False)
         self._timer.setInterval(100)
@@ -39,18 +40,27 @@ class VideoPlayer(QtWidgets.QWidget):
         self._update_ui()
         self.bar.video_state.connect(self.handle_video_state_update)
         self.bar.video_set_point_in_time.connect(self.handle_slider_change)
+        self.bar.video_set_volume.connect(self.handle_volume_change)
+        self._timer.start()
 
     def handle_slider_change(self, value):
+        if self._player.get_media() is None:
+            return
+
         self._player.set_time(value)
 
     def handle_video_state_update(self):
         if self._player.is_playing():
             self._player.set_pause(1)
             self.bar.set_playing(False)
+            self._is_playing = False
         else:
             self._player.set_pause(0)
             self.bar.set_playing(True)
-            self._timer.stop()
+            self._is_playing = True
+
+    def handle_volume_change(self, volume):
+        self._player.set_volume(volume)
 
     def set_remote_host(self, remote_host, port):
         self.remote_host = remote_host
@@ -64,12 +74,16 @@ class VideoPlayer(QtWidgets.QWidget):
         self._player.set_media(media)
         self._player.play()
         self.bar.set_playing(True)
-        self._timer.start()
+        self._is_playing = True
 
     def _update_ui(self):
+        if not self._is_playing:
+            return
+        if self._player.get_media() is None:
+            return
+        self.bar.set_volume(self._player.audio_get_volume())
         curr_time = self._player.get_time()
         full_length = self._player.get_length()
         if curr_time == full_length:
-            self._timer.stop()
             self.bar.set_playing(False)
         self.bar.set_current_video_time(curr_time, full_length)

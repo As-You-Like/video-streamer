@@ -5,5 +5,9 @@
         <file>icons/DirectoryIcon.png</file>
         <file>icons/Play.png</file>
         <file>icons/Pause.png</file>
+        <file>icons/VolumeOff.png</file>
+        <file>icons/VolumeDown.png</file>
+        <file>icons/FastForward.png</file>
+        <file>icons/FastRewind.png</file>
     </qresource>
 </RCC>

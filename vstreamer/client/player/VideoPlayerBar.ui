@@ -23,7 +23,7 @@
             <item>
                 <layout name="horizontalLayout" class="QHBoxLayout">
                     <item>
-                        <widget name="play_pause_toolbutton" class="QToolButton">
+                        <widget name="rewind_toolbutton" class="QToolButton">
                             <property name="minimumSize">
                                 <size>
                                     <width>0</width>
@@ -42,7 +42,28 @@
                         </widget>
                     </item>
                     <item>
-                        <widget name="slider" class="QSlider">
+                        <widget name="play_pause_toolbutton" class="QToolButton">
+                            <property name="text">
+                                <string>...</string>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget name="forward_toolbutton" class="QToolButton">
+                            <property name="text">
+                                <string>...</string>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget name="volume_toolbutton" class="QToolButton">
+                            <property name="text">
+                                <string>...</string>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget name="volume_slider" class="QSlider">
                             <property name="sizePolicy">
                                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                                     <horstretch>0</horstretch>
@@ -55,6 +76,13 @@
                                     <height>16777</height>
                                 </size>
                             </property>
+                            <property name="orientation">
+                                <enum>Qt::Horizontal</enum>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget name="slider" class="QSlider">
                             <property name="orientation">
                                 <enum>Qt::Horizontal</enum>
                             </property>
