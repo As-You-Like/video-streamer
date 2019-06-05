@@ -17,10 +17,22 @@ class VideoPlayerBar(QtWidgets.QWidget):
         self.forward_toolbutton.setIcon(QtGui.QIcon(":/icons/FastForward.png"))
         self.rewind_toolbutton.setIcon(QtGui.QIcon(":/icons/FastRewind.png"))
         self.rewind_toolbutton.clicked.connect(self._handle_rewind)
+        self.forward_toolbutton.clicked.connect(self._handle_forward)
+        self.volume_toolbutton.clicked.connect(self._handle_volume_click)
+        self._old_volume = -1
 
+    def _handle_volume_click(self):
+        if self.volume_slider.value() == 0:
+            if self._old_volume != -1:
+                self.set_volume(self._old_volume)
+                self._old_volume = -1
+            else:
+                return
+        self._old_volume = self.volume_slider.value()
+        self.set_volume(0)
     def _handle_rewind(self):
         cur_val = self.slider.value()
-        max_val = self.slider.getMaximum()
+        max_val = self.slider.maximum()
         next_val = cur_val - 0.1 * max_val
         if next_val < 0:
             next_val = 0
@@ -28,7 +40,7 @@ class VideoPlayerBar(QtWidgets.QWidget):
 
     def _handle_forward(self):
         cur_val = self.slider.value()
-        max_val = self.slider.getMaximum()
+        max_val = self.slider.maximum()
         next_val = cur_val + 0.1 * max_val
         if next_val > max_val:
             next_val = max_val

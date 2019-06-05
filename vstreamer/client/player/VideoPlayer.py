@@ -65,6 +65,8 @@ class VideoPlayer(QtWidgets.QWidget):
         self.bar.video_state.connect(self.handle_video_state_update)
         self.bar.video_set_point_in_time.connect(self.handle_slider_change)
         self.bar.video_set_volume.connect(self.handle_volume_change)
+        self.bar.set_playing(False)
+        self.bar.set_volume(50)
         self._timer.start()
 
     def handle_slider_change(self, value):
@@ -126,6 +128,7 @@ class VideoPlayer(QtWidgets.QWidget):
         if level == vlc.LogLevel.WARNING:
             self.error_occurred.emit(vstreamer_utils.Error(msg, vstreamer_utils.ErrorLevel.WARNING))
         elif level == vlc.LogLevel.ERROR:
-            self.error_occurred.emit(vstreamer_utils.Error(msg, vstreamer_utils.ErrorLevel.ERROR))
+            vstreamer_utils.log_info(msg)
+            # self.error_occurred.emit(vstreamer_utils.Error(msg, vstreamer_utils.ErrorLevel.ERROR))
         elif level == vlc.LogLevel.NOTICE:
             vstreamer_utils.log_info(msg)
