@@ -40,7 +40,6 @@ class Configuration:
 
         self._create_missing()
         self.read_config()
-        vstreamer_utils.log_info("Read configuration from '%s'" % str(self.path.file))
 
     def read_config(self):
         settings = QtCore.QSettings(str(self.path.file), QtCore.QSettings.IniFormat)
@@ -48,6 +47,7 @@ class Configuration:
         self.config.starting_port = int(settings.value(Configuration.Config.STARTING_PORT, str(self.config.starting_port)))
         if settings.status() != QtCore.QSettings.NoError:
             raise ConfigException("Could not read configuration file", str(self.path.file))
+        vstreamer_utils.log_info("Read configuration from '%s'" % str(self.path.file))
 
     def write_config(self):
         settings = QtCore.QSettings(str(self.path.file), QtCore.QSettings.IniFormat)
@@ -56,6 +56,7 @@ class Configuration:
         settings.sync()
         if settings.status() != QtCore.QSettings.NoError:
             raise ConfigException("Could not write configuration file", str(self.path.file))
+        vstreamer_utils.log_info("Saved configuration to '%s'" % str(self.path.file))
 
     def _create_missing(self):
         if not self.path.directory.exists():
