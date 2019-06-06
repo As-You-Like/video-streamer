@@ -1,9 +1,8 @@
 import ctypes.util
 import platform
 import urllib.parse
-
 import vlc
-from PySide2 import QtCore, QtWidgets, QtMultimediaWidgets
+from PySide2 import QtCore, QtWidgets, QtGui, QtMultimediaWidgets
 
 import vstreamer_utils
 from vstreamer.client.player import VideoPlayerBar
@@ -27,26 +26,44 @@ class VideoPlayer(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self._parent = parent
         self.remote_host = None
         self.port = None
 
-        self.layout = QtWidgets.QVBoxLayout(self)
         self.player_widget = QtMultimediaWidgets.QVideoWidget(self)
-        self.layout.addWidget(self.player_widget)
-        self.setLayout(self.layout)
+        self.player_widget.setMouseTracking(True)
+        self.player_widget.setGeometry(0, 0, self.width(), self.height())
         self.bar = VideoPlayerBar(self)
-        self.layout.addWidget(self.bar)
-        self.setMinimumSize(500, 500)
+        self.bar.setMouseTracking(True)
+        self.bar.setGeometry(0, max(0, self.height() - 30), self.width(), 30)
+        self.bar.setVisible(False)
+
+        pal = QtGui.QPalette()
+        pal.setColor(QtGui.QPalette.Background, QtCore.Qt.black)
+        self.setAutoFillBackground(True)
+        self.setPalette(pal)
+
+        self.setMouseTracking(True)
 
         @vlc.CallbackDecorators.LogCb
         def log_callback(data, level, ctx, fmt, args):
             self._log_callback(level, fmt, args)
+        self._save_log_callback = log_callback
 
-        self._callback = log_callback
+        def player_event_handler(event_type):
+            QtCore.QMetaObject.invokeMethod(self, "_player_event_handler", QtCore.Qt.QueuedConnection,
+                                            QtCore.QGenericArgument("int", event_type.type))
+        self._save_player_event_handler = player_event_handler
 
         self._instance = vlc.Instance()
         self._instance.log_set(log_callback, None)
         self._player = self._instance.media_player_new()
+        self._events = self._player.event_manager()
+        self._events.event_attach(vlc.EventType.MediaPlayerEndReached, player_event_handler)
+        self._events.event_attach(vlc.EventType.MediaPlayerTimeChanged, player_event_handler)
+        self._events.event_attach(vlc.EventType.MediaPlayerPositionChanged, player_event_handler)
+        self._events.event_attach(vlc.EventType.MediaPlayerLengthChanged, player_event_handler)
+
         if platform.system() == "Linux":  # for Linux using the X Server
             self._player.set_xwindow(int(self.player_widget.winId()))
         elif platform.system() == "Windows":  # for Windows
@@ -56,37 +73,23 @@ class VideoPlayer(QtWidgets.QWidget):
         else:
             raise RuntimeError("Multimedia is not supported on this platform")
 
-        self._is_playing = False
-        self._timer = QtCore.QTimer(self)
-        self._timer.setSingleShot(False)
-        self._timer.setInterval(100)
-        self._timer.timeout.connect(self._update_ui)
-        self._update_ui()
-        self.bar.video_state.connect(self.handle_video_state_update)
-        self.bar.video_set_point_in_time.connect(self.handle_slider_change)
-        self.bar.video_set_volume.connect(self.handle_volume_change)
-        self.bar.set_playing(False)
-        self.bar.set_volume(50)
-        self._timer.start()
+        self.bar.playing_state_changed.connect(self._player_set_playing)
+        self.bar.position_changed.connect(self._player_set_position)
+        self.bar.volume_changed.connect(self._player_set_volume)
+        self.bar.muted_changed.connect(self._player_set_muted)
 
-    def handle_slider_change(self, value):
-        if self._player.get_media() is None:
-            return
+    def resizeEvent(self, event):
+        self.player_widget.setGeometry(0, 0, event.size().width(), event.size().height())
+        self.bar.setGeometry(0, max(0, event.size().height() - 30), event.size().width(), 30)
 
-        self._player.set_time(value)
-
-    def handle_video_state_update(self):
-        if self._player.is_playing():
-            self._player.set_pause(1)
-            self.bar.set_playing(False)
-            self._is_playing = False
+    def mouseMoveEvent(self, event):
+        if self.height() - event.y() <= 30:
+            self.bar.setVisible(True)
         else:
-            self._player.set_pause(0)
-            self.bar.set_playing(True)
-            self._is_playing = True
+            self.bar.setVisible(False)
 
-    def handle_volume_change(self, volume):
-        self._player.audio_set_volume(volume)
+    def mouseDoubleClickEvent(self, event):
+        self._toggle_fullscreen()
 
     def set_remote_host(self, remote_host, port):
         self.remote_host = remote_host
@@ -102,19 +105,51 @@ class VideoPlayer(QtWidgets.QWidget):
         self._player.play()
         self.bar.set_playing(True)
         vstreamer_utils.log_info("Playing video from '%s'" % url)
-        self._is_playing = True
 
-    def _update_ui(self):
-        if not self._is_playing:
-            return
-        if self._player.get_media() is None:
-            return
-        self.bar.set_volume(self._player.audio_get_volume())
+    def _toggle_fullscreen(self):
+        if self.parent() is not None:
+            self.setParent(None)
+            self._parent.window().hide()
+            self.showFullScreen()
+        else:
+            self._parent.window().show()
+            self.hide()
+            self.setParent(self._parent)
+            self.show()
+
+    @QtCore.Slot(int)
+    def _player_event_handler(self, event_type):
         curr_time = self._player.get_time()
         full_length = self._player.get_length()
-        if curr_time == full_length:
+        if event_type in (vlc.EventType.MediaPlayerTimeChanged, vlc.EventType.MediaPlayerPositionChanged,
+                          vlc.EventType.MediaPlayerLengthChanged):
+            self.bar.update_current_video_time(curr_time, full_length)
+        elif event_type == vlc.EventType.MediaPlayerEndReached:
+            self.bar.update_current_video_time(0, full_length)
             self.bar.set_playing(False)
-        self.bar.set_current_video_time(curr_time, full_length)
+
+    def _player_set_volume(self, volume):
+        self._player.audio_set_volume(volume)
+
+    def _player_set_position(self, value):
+        if self._player.get_media() is None:
+            return
+        self._player.set_time(value)
+
+    def _player_set_playing(self, playing):
+        if self._player.get_media() is None:
+            self.bar.set_playing(False)
+            return
+        if playing:
+            self._player.set_pause(0)
+        else:
+            self._player.set_pause(1)
+
+    def _player_set_muted(self, muted):
+        self._player.audio_set_mute(muted)
+
+    def _player_stop(self):
+        pass
 
     @staticmethod
     def _make_msg(fmt, args):
@@ -125,10 +160,7 @@ class VideoPlayer(QtWidgets.QWidget):
 
     def _log_callback(self, level, fmt, args):
         msg = VideoPlayer._make_msg(fmt, args)
-        if level == vlc.LogLevel.WARNING:
+        if level in (vlc.LogLevel.WARNING, vlc.LogLevel.ERROR):
             self.error_occurred.emit(vstreamer_utils.Error(msg, vstreamer_utils.ErrorLevel.WARNING))
-        elif level == vlc.LogLevel.ERROR:
-            vstreamer_utils.log_info(msg)
-            # self.error_occurred.emit(vstreamer_utils.Error(msg, vstreamer_utils.ErrorLevel.ERROR))
         elif level == vlc.LogLevel.NOTICE:
             vstreamer_utils.log_info(msg)
