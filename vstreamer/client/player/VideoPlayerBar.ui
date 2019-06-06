@@ -55,12 +55,19 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="forward_toolbutton">
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
+         <widget name="stop_toolbutton" class="QToolButton">
+             <property name="text">
+                 <string>...</string>
+             </property>
+         </widget>
      </item>
+        <item>
+            <widget class="QToolButton" name="forward_toolbutton">
+                <property name="text">
+                    <string>...</string>
+                </property>
+            </widget>
+        </item>
      <item>
       <widget class="QToolButton" name="volume_toolbutton">
        <property name="text">
@@ -107,6 +114,13 @@
        </property>
       </widget>
      </item>
+        <item>
+            <widget name="fullscreen_toolbutton" class="QToolButton">
+                <property name="text">
+                    <string>...</string>
+                </property>
+            </widget>
+        </item>
     </layout>
    </item>
   </layout>

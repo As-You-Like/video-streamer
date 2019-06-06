@@ -9,5 +9,7 @@
         <file>icons/VolumeDown.png</file>
         <file>icons/FastForward.png</file>
         <file>icons/FastRewind.png</file>
+        <file>icons/Fullscreen.png</file>
+        <file>icons/Stop.png</file>
     </qresource>
 </RCC>

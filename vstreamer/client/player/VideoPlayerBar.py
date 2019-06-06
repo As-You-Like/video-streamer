@@ -8,6 +8,9 @@ class VideoPlayerBar(QtWidgets.QWidget):
     muted_changed = QtCore.Signal(bool)
     position_changed = QtCore.Signal(int)
     volume_changed = QtCore.Signal(int)
+    fullscreen_requested = QtCore.Signal()
+    stop_requested = QtCore.Signal()
+
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -17,6 +20,8 @@ class VideoPlayerBar(QtWidgets.QWidget):
 
         self.forward_toolbutton.setIcon(QtGui.QIcon(":/icons/FastForward.png"))
         self.rewind_toolbutton.setIcon(QtGui.QIcon(":/icons/FastRewind.png"))
+        self.fullscreen_toolbutton.setIcon(QtGui.QIcon(":/icons/Fullscreen.png"))
+        self.stop_toolbutton.setIcon(QtGui.QIcon(":/icons/Stop.png"))
         self.update_current_video_time(0, 0)
         self.volume_slider.setRange(0, 100)
         self.volume_slider.setValue(100)
@@ -27,6 +32,8 @@ class VideoPlayerBar(QtWidgets.QWidget):
         self.slider.sliderMoved.connect(self._handle_slider_drag_value)
         self.rewind_toolbutton.clicked.connect(self._handle_rewind)
         self.forward_toolbutton.clicked.connect(self._handle_forward)
+        self.stop_toolbutton.clicked.connect(self.stop_requested)
+        self.fullscreen_toolbutton.clicked.connect(self.fullscreen_requested)
         self.volume_toolbutton.clicked.connect(self._handle_mute_click)
         self.volume_slider.sliderMoved.connect(self.volume_changed)
 

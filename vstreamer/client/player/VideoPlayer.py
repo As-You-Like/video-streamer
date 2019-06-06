@@ -77,6 +77,8 @@ class VideoPlayer(QtWidgets.QWidget):
         self.bar.position_changed.connect(self._player_set_position)
         self.bar.volume_changed.connect(self._player_set_volume)
         self.bar.muted_changed.connect(self._player_set_muted)
+        self.bar.fullscreen_requested.connect(self._toggle_fullscreen)
+        self.bar.stop_requested.connect(self._player_stop)
 
     def resizeEvent(self, event):
         self.player_widget.setGeometry(0, 0, event.size().width(), event.size().height())
@@ -149,7 +151,8 @@ class VideoPlayer(QtWidgets.QWidget):
         self._player.audio_set_mute(muted)
 
     def _player_stop(self):
-        pass
+        self._player.stop()
+        self.bar.set_playing(False)
 
     @staticmethod
     def _make_msg(fmt, args):
