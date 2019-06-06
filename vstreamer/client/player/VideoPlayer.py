@@ -155,7 +155,11 @@ class VideoPlayer(QtWidgets.QWidget):
 
     def _player_stop(self):
         self._player.stop()
+        self._player.set_media(None)
         self.bar.set_playing(False)
+        self.bar.update_current_video_time(0, 0)
+        self.hide()
+        self.show()
 
     @staticmethod
     def _make_msg(fmt, args):
