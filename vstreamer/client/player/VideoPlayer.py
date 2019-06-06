@@ -35,8 +35,9 @@ class VideoPlayer(QtWidgets.QWidget):
         self.player_widget.setGeometry(0, 0, self.width(), self.height())
         self.bar = VideoPlayerBar(self)
         self.bar.setMouseTracking(True)
-        self.bar.setGeometry(0, max(0, self.height() - 30), self.width(), 30)
+        self.bar.setGeometry(0, max(0, self.height() - 51), self.width(), 51)
         self.bar.setVisible(False)
+        self.bar.destroyed.connect(lambda: print("Destroyed bar"))
 
         pal = QtGui.QPalette()
         pal.setColor(QtGui.QPalette.Background, QtCore.Qt.black)
@@ -80,10 +81,10 @@ class VideoPlayer(QtWidgets.QWidget):
 
     def resizeEvent(self, event):
         self.player_widget.setGeometry(0, 0, event.size().width(), event.size().height())
-        self.bar.setGeometry(0, max(0, event.size().height() - 30), event.size().width(), 30)
+        self.bar.setGeometry(0, max(0, event.size().height() - 51), event.size().width(), 51)
 
     def mouseMoveEvent(self, event):
-        if self.height() - event.y() <= 30:
+        if self.height() - event.y() <= 51:
             self.bar.setVisible(True)
         else:
             self.bar.setVisible(False)
@@ -108,13 +109,15 @@ class VideoPlayer(QtWidgets.QWidget):
 
     def _toggle_fullscreen(self):
         if self.parent() is not None:
+            self._parent.removeTab(0)
             self.setParent(None)
             self._parent.window().hide()
             self.showFullScreen()
         else:
             self._parent.window().show()
             self.hide()
-            self.setParent(self._parent)
+            self._parent.insertTab(0, self, "Player")
+            self._parent.setCurrentIndex(0)
             self.show()
 
     @QtCore.Slot(int)

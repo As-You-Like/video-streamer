@@ -8,6 +8,7 @@ from vstreamer import application, client
 
 def main():
     app = application.VideoStreamerApplication(sys.argv)
+
     error_handler = vstreamer_utils.ErrorHandler(vstreamer_utils.ErrorHandlerType.GUI_HANDLER, app)
 
     try:
