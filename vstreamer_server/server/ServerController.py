@@ -39,8 +39,11 @@ class ServerController(dbus.service.Object):
     @dbus.service.method(vstreamer_utils.DBUS_NAME, in_signature='', out_signature='b')
     def set_additional_properties(self, file, title, description, image_path):
         try:
-            with open(image_path, "rb") as image_file:
-                image = bytearray(image_file.read())
+            if image_path is None or image_path == "":
+                image = None
+            else:
+                with open(image_path, "rb") as image_file:
+                    image = bytearray(image_file.read())
             self.directory_tree.add_additional_properties(
                 file, model.AdditionalEntryProperties(title, description, image))
             return True

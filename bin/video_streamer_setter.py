@@ -28,10 +28,10 @@ def main():
 
     if server_controller.set_additional_properties(file, title, description, image_file):
         print("Operation succeeded")
-        return 1
+        return 0
     else:
         print("Operation failed")
-        return 0
+        return 1
 
 
 if __name__ == "__main__":
